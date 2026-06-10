@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>首尔江南 48 小时行程</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root{--ink:#171714;--cream:#f3efe6;--paper:#fffdf8;--lime:#d8f26a;--coral:#ff7a64;--blue:#85a6ff;--muted:#6e6a61;--line:#d8d2c6}
+    *{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font-family:"DM Sans",sans-serif}
+    .hero{min-height:58vh;padding:32px 5vw 48px;display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:end;background:linear-gradient(125deg,#191916 0 58%,#d8f26a 58%)}
+    .kicker{text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:var(--lime)} h1{font:600 clamp(54px,9vw,130px)/.82 "Playfair Display",serif;color:#fff;margin:24px 0;max-width:900px}
+    .hero p{color:#d9d5cc;max-width:620px;font-size:18px} .hero-panel{background:var(--paper);padding:26px;border:1px solid #111;box-shadow:10px 10px 0 #111}
+    .hero-panel strong{display:block;font-size:42px} .hero-panel span{display:block;margin-top:6px;color:var(--muted)} .hero-panel .mini{font-size:13px;margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
+    nav{position:sticky;top:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;background:rgba(255,253,248,.93);backdrop-filter:blur(12px);padding:15px 5vw;border-bottom:1px solid var(--line)}
+    nav a{color:var(--ink);text-decoration:none;font-weight:700} nav .links{display:flex;gap:20px;font-size:14px}
+    main{padding:70px 5vw} .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px} h2{font:600 clamp(36px,6vw,72px)/1 "Playfair Display",serif;margin:0} .section-head p{max-width:460px;color:var(--muted)}
+    .schedule{display:grid;grid-template-columns:repeat(3,1fr);gap:18px} .day-card{background:var(--paper);border:1px solid var(--ink);padding:22px}
+    .day-card header{min-height:100px;border-bottom:2px solid var(--ink)} .day-card header span{font-size:12px;text-transform:uppercase;letter-spacing:.16em} .day-card h3{font:600 25px "Playfair Display",serif;margin:12px 0}
+    .stop{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:18px 0;border-bottom:1px solid var(--line)} .stop:last-child{border:0} .time,.time-edit{font-weight:700;font-size:13px}
+    .time-edit{width:64px;border:0;border-bottom:2px solid var(--coral);background:transparent;padding:2px} .stop span:not(.time){display:block;color:var(--muted);font-size:12px;margin-top:4px} .stop p{font-size:13px;line-height:1.45;color:var(--muted);margin:8px 0 0}
+    .route-tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px} .route-toggle{border:1px solid var(--ink);background:var(--paper);padding:10px 14px;font-weight:700;cursor:pointer} .route-toggle.active{background:var(--ink);color:#fff}
+    .map-wrap{display:grid;grid-template-columns:360px 1fr;border:1px solid var(--ink);background:var(--paper);min-height:620px} #map{min-height:620px} .places{padding:18px;overflow:auto;max-height:620px} .legend{display:flex;gap:12px;flex-wrap:wrap;padding:4px 0 14px;border-bottom:2px solid var(--ink);font-size:12px;font-weight:700} .legend span{display:flex;align-items:center;gap:5px} .legend i{display:inline-block;width:10px;height:10px;border-radius:50%} .place-card{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;padding:17px 4px;display:grid;grid-template-columns:14px 1fr 20px;gap:12px;align-items:start;cursor:pointer}
+    .place-card:hover{background:#f5f1e8} .place-card small{display:block;color:var(--muted);margin-top:5px;line-height:1.35} .dot{width:11px;height:11px;border-radius:50%;margin-top:5px;background:var(--blue)} .dot.luxury{background:var(--coral)} .dot.beauty{background:var(--lime)} .dot.medical{background:#b17cff}
+    .note{margin-top:24px;padding:24px;background:#191916;color:#fff;display:grid;grid-template-columns:40px 1fr;gap:16px} .note b{font-size:26px;color:var(--coral)} .note p{margin:4px 0;color:#d8d4ca;line-height:1.55}
+    .guide-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px} .guide-card{background:var(--paper);border:1px solid var(--ink);padding:22px} .guide-card.recommended{box-shadow:8px 8px 0 var(--lime)} .guide-card .tag{display:inline-block;background:var(--ink);color:white;padding:5px 8px;font-size:11px;font-weight:700;letter-spacing:.08em} .guide-card h3{font:600 25px "Playfair Display",serif;margin:16px 0 8px} .guide-card .price{font-size:27px;font-weight:700;margin:10px 0} .guide-card p,.guide-card li{font-size:14px;line-height:1.55;color:var(--muted)} .guide-card ol,.guide-card ul{padding-left:20px} .guide-card li{margin:8px 0} .compare{overflow:auto;background:var(--paper);border:1px solid var(--ink)} .compare table{border-collapse:collapse;width:100%;min-width:720px} .compare th,.compare td{padding:15px;border-bottom:1px solid var(--line);text-align:left;font-size:13px} .compare th{background:#171714;color:#fff} .compare tr:last-child td{border-bottom:0} .route-list{display:grid;grid-template-columns:1fr 1fr;gap:16px} .route-step{background:var(--paper);border:1px solid var(--line);padding:18px} .route-step h3{margin:0 0 12px;font-size:17px} .route-step p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.5} .line-badge{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:50%;color:#fff;font-weight:700;margin-right:6px} .l2{background:#2ca34a} .l9{background:#b59b00} .bundang{background:#e0a800} .arex{background:#48a8d8} .money-list{display:grid;grid-template-columns:1.1fr .9fr;gap:18px} .check-card{background:#fffdf8;border:1px solid var(--ink);padding:22px} .check-row{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)} .check-row:last-child{border:0} .check-row b{color:#171714}
+    .sources{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px} .sources a{padding:9px 12px;border:1px solid var(--line);color:var(--ink);text-decoration:none;background:var(--paper);font-size:12px}
+    footer{padding:30px 5vw 70px;color:var(--muted);font-size:13px} .leaflet-popup-content-wrapper{border-radius:0} .popup a{color:#111;font-weight:700}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;background:linear-gradient(160deg,#191916 0 70%,#d8f26a 70%)}.schedule,.guide-grid,.route-list,.money-list{grid-template-columns:1fr}.map-wrap{grid-template-columns:1fr}.places{max-height:none}#map{min-height:480px}}
+    @media print{nav,.places{display:none}.hero{min-height:auto;background:#fff;padding:20px}h1,.hero p,.kicker{color:#111}.hero-panel{box-shadow:none}main{padding:25px}.map-wrap{display:block}#map{height:500px}}
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div><div class="kicker">首尔 · 江南 · 两晚</div><h1>48 小时，路线刚刚好。</h1><p>把购物、剪发、化妆、写真和医疗预约集中在两个区域，减少来回穿越首尔的时间。</p></div>
+    <aside class="hero-panel"><strong>2 个区域</strong><span>江南站 + 狎鸥亭 / 清潭洞</span><div class="mini">下方预约时间可以编辑，并会保存在本设备。</div></aside>
+  </section>
+  <nav><a href="#">江南行程</a><div class="links"><a href="#airport">机场</a><a href="#transit">地铁</a><a href="#payment">支付</a><a href="#route">行程</a><a href="#map-section">地图</a><a href="javascript:window.print()">打印</a></div></nav>
+  <main>
+    <section id="airport">
+      <div class="section-head"><h2>从仁川机场到江南</h2><p>带行李时，直达比单纯追求最快更重要。以下以 Airbnb 位于江南站附近为前提；取得准确地址后，应再次核对最近的巴士站。</p></div>
+      <div class="guide-grid">
+        <article class="guide-card recommended"><span class="tag">首选 · 行李最轻松</span><h3>6009 机场巴士</h3><div class="price">₩17,000 / 成人</div><p>从仁川机场直达新沙、论岘、江南站一带，不需要拖着行李换乘。</p><ol><li>入境及取行李后，到航站楼机场巴士售票柜台或自助机。</li><li>搜索并购买 <strong>6009</strong> 路线车票；从机场进城需先取得实体票。</li><li>T1 官方站点为 1 层 4 号附近；T2 为交通中心 B1 15 号附近，仍以票面和现场屏幕为准。</li><li>告诉司机你要在最接近 Airbnb 的江南站下车，并在到站前准备取行李。</li></ol><p><strong>时间：</strong>通常约 70-100 分钟，繁忙时更久。末班车时间会变化，晚到航班务必现场确认。</p></article>
+        <article class="guide-card"><span class="tag">省钱 · 不怕换乘</span><h3>AREX 普通列车 + 9号线</h3><div class="price">约 ₩5,000-7,000</div><p>不要先绕到首尔站。更顺路的方法是在金浦机场换乘 9 号线。</p><ol><li>机场站购买或充值 T-money。</li><li>搭乘 AREX 普通列车，在 <strong>Gimpo Airport / 金浦机场</strong> 下车。</li><li>转乘 9 号线急行，前往 <strong>Sinnonhyeon / 新论岘</strong>。</li><li>新论岘站离江南站约一站或 10-15 分钟步行，再依 Airbnb 地址决定步行或短程出租车。</li></ol><p><strong>时间：</strong>约 75-95 分钟。带大行李或早晚高峰不推荐。</p></article>
+        <article class="guide-card"><span class="tag">深夜 / 多人</span><h3>机场出租车</h3><div class="price">通常约 ₩70,000-100,000+</div><p>两至三人、有多件行李、深夜抵达或 Airbnb 离巴士站较远时最方便。</p><ul><li>只使用机场官方出租车排队区。</li><li>准备韩文地址，并确认是 Gangnam-gu 还是 Seocho-gu。</li><li>高速公路费、深夜附加费和车型会影响总价。</li><li>不要接受到达大厅内主动拉客的非官方车辆。</li></ul></article>
+      </div>
+      <div class="note"><b>返</b><div><strong>回机场安排</strong><p>若搭 6009 从市区回仁川机场，一般在站牌上车后以 T-money 或现金付款。国际航班建议至少提前 4.5-5 小时离开江南，以覆盖堵车、值机、退税和安检。若皮肤管理包含注射、镇静或能量类项目，请向医院确认当天出行注意事项。</p></div></div>
+    </section>
+
+    <section id="transit" style="margin-top:90px">
+      <div class="section-head"><h2>地铁怎么搭</h2><p>首尔地铁进站和出站都要刷卡。换乘时不要出闸；跟随彩色线路和英文站名即可。韩国境内导航建议使用 Naver Map 或 KakaoMap。</p></div>
+      <div class="route-list">
+        <article class="route-step"><h3>Airbnb → adidas / Olive Young</h3><p><span class="line-badge l2">2</span><strong>江南站 Gangnam</strong></p><p>两家店都在 Gangnam-daero 主路上，通常直接步行最省事。先去北侧 adidas，再沿主路返回 Olive Young，可减少折返。</p></article>
+        <article class="route-step"><h3>江南站 → 狎鸥亭罗德奥</h3><p><span class="line-badge l2">2</span>江南 → 宣陵 Seolleung</p><p><span class="line-badge bundang">水</span>宣陵换乘水仁·盆唐线 → 狎鸥亭罗德奥 Apgujeong Rodeo</p><p>约 25-35 分钟，加上步行。早上携带服装、化妆用品时，出租车可能更舒服。</p></article>
+        <article class="route-step"><h3>剪发 → 化妆 → 写真</h3><p>这些地点目前为临时位置。预约时尽量选择狎鸥亭罗德奥、岛山公园或清潭洞附近，并把三个准确地址放入 Naver Map 比较。</p><p>每一段预留 15-30 分钟，雨天和周末再增加缓冲。</p></article>
+        <article class="route-step"><h3>CASA LOEWE → Vivienne Westwood</h3><p>两站都在狎鸥亭商圈。天气好、鞋子舒适时可步行；拍摄后疲劳或携带购物袋时，建议短程出租车。</p><p>在商场内找不到店时，向服务台出示英文店名和楼层。</p></article>
+      </div>
+      <div class="compare" style="margin-top:18px"><table><thead><tr><th>交通方式</th><th>怎么买</th><th>适合你们吗</th><th>注意</th></tr></thead><tbody>
+        <tr><td><strong>T-money</strong></td><td>便利店或机场购买并充值</td><td>最推荐：两晚、路线不多、还要搭机场交通</td><td>每人一张；上下车都要刷。保留少量现金充值作为备用。</td></tr>
+        <tr><td><strong>2 日气候同行卡</strong></td><td>实体卡约 ₩3,000，2 日票 ₩8,000</td><td>只有计划频繁搭地铁和巴士才划算</td><td>短期票充值当天立即生效；仁川机场 AREX 路段不应假设全部包含。</td></tr>
+        <tr><td><strong>单程票</strong></td><td>地铁站售票机购买</td><td>不建议，除非只搭一次</td><td>比交通卡票价多 ₩100，并需另付 ₩500 押金，到站后在退款机退回。</td></tr>
+        <tr><td><strong>出租车</strong></td><td>正规路边出租车、Kakao T 或酒店代叫</td><td>造型、写真和皮肤管理后移动时非常实用</td><td>把韩文地址准备好；高峰期江南道路会堵车。</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="payment" style="margin-top:90px">
+      <div class="section-head"><h2>付款与退税</h2><p>韩国大部分连锁店、百货店、餐厅和诊所都接受银行卡，但交通、街边小店和意外情况仍需要现金备用。</p></div>
+      <div class="money-list">
+        <article class="check-card"><h3>建议随身组合</h3>
+          <div class="check-row"><b>1</b><div><strong>两张不同银行的实体信用卡</strong><br>优先 Visa 或 Mastercard；提前开启境外交易通知。</div></div>
+          <div class="check-row"><b>2</b><div><strong>每人一张 T-money</strong><br>用于地铁、公交及部分便利店消费，不要两人共刷同一张。</div></div>
+          <div class="check-row"><b>3</b><div><strong>₩50,000-100,000 现金备用</strong><br>用于交通卡充值、小店、出租车备用和紧急情况。</div></div>
+          <div class="check-row"><b>4</b><div><strong>护照原件或按商店要求出示</strong><br>购物退税通常需要护照资料；贵重购物时务必携带。</div></div>
+        </article>
+        <article class="check-card"><h3>刷卡时这样选</h3>
+          <div class="check-row"><b>₩</b><div><strong>始终选择 KRW 韩元结算</strong><br>如果机器询问使用美元或韩元，选择 KRW，避免动态货币转换的不利汇率。</div></div>
+          <div class="check-row"><b>医</b><div><strong>皮肤管理费用提前确认</strong><br>询问项目名称、机器或注射产品、发数或剂量、麻膏、税费、处方药和复诊是否另收费，并确认银行卡单笔限额。</div></div>
+          <div class="check-row"><b>退</b><div><strong>普通购物退税</strong><br>寻找 Tax Free 标识，单笔消费至少 ₩15,000；可即时退税的单笔金额须低于 ₩1,000,000，全程累计不超过 ₩5,000,000。结账时出示护照并保存收据。</div></div>
+          <div class="check-row"><b>税</b><div><strong>不要预设皮肤管理可以退税</strong><br>韩国针对外国游客的整形及医美医疗增值税退税优惠已于 2025 年底到期。2026 年请向林克医院确认最终含税价格。</div></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="route" style="margin-top:90px">
+      <div class="section-head"><h2>行程安排</h2><p>第 1 天集中逛江南站附近营业较晚的门店；第 2 天在狎鸥亭完成造型、拍摄和奢侈品购物；第 3 天在新论岘进行皮肤管理并轻松收尾。</p></div>
+      <div class="schedule">
+          <article class="day-card">
+            <header><span>第 1 天</span><h3>抵达 + 江南购物</h3></header>
+            
+              <div class="stop">
+                <div><span class="time">15:00</span></div>
+                <div><strong>入住并休息</strong><span>Airbnb</span><p>为机场到江南的交通及安放行李预留时间。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">17:00</span></div>
+                <div><strong>adidas Gangnam Brand Center</strong><span>adidas</span><p>从江南站步行、搭地铁或短程出租车前往。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">18:30</span></div>
+                <div><strong>Olive Young Gangnam Town</strong><span>Olive Young</span><p>安排在 adidas 之后；营业较晚，并可办理退税。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">20:15</span></div>
+                <div><strong>江南站附近晚餐</strong><span>自由安排</span><p>第一晚保持轻松，尽量不要离 Airbnb 太远。</p></div>
+              </div>
+          </article>
+          <article class="day-card">
+            <header><span>第 2 天</span><h3>造型、拍摄 + 狎鸥亭购物</h3></header>
+            
+              <div class="stop">
+                <div><span class="time">08:00</span></div>
+                <div><strong>剪发与造型</strong><span>发廊</span><p>包括沟通和完成造型，预留 90 分钟。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">09:30</span></div>
+                <div><strong>化妆</strong><span>化妆室</span><p>预留 75-90 分钟，并带上妆容参考照片。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">11:00</span></div>
+                <div><strong>交通与补妆缓冲</strong><span>狎鸥亭</span><p>预留 30 分钟应对延误、换装和最后补妆。</p></div>
+              </div>
+              <div class="stop">
+                <div><input class="time-edit" data-key="photoshoot" value="11:30" aria-label="写真拍摄时间"></div>
+                <div><strong>写真拍摄</strong><span>摄影棚</span><p>时间可编辑；建议预留约两小时，并在皮肤管理前完成，以免泛红影响上镜。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">13:30</span></div>
+                <div><strong>午餐及缓冲</strong><span>狎鸥亭</span><p>不要让购物行程紧接着拍摄结束时间。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">14:30</span></div>
+                <div><strong>CASA LOEWE Seoul</strong><span>LOEWE</span><p>旗舰店建议预留约 60 分钟。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">15:45</span></div>
+                <div><strong>Galleria WEST Vivienne Westwood</strong><span>Vivienne Westwood</span><p>距离 CASA LOEWE 约 10-15 分钟出租车程，也可步行。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">17:15</span></div>
+                <div><strong>咖啡 / 返回 Airbnb</strong><span>休息缓冲</span><p>晚间保持空闲，以便遵守医院的术前要求。</p></div>
+              </div>
+          </article>
+          <article class="day-card">
+            <header><span>第 3 天</span><h3>皮肤管理 + 轻松收尾</h3></header>
+            
+              <div class="stop">
+                <div><input class="time-edit" data-key="skincare" value="10:00" aria-label="皮肤管理报到时间"></div>
+                <div><strong>韩国林克整形医院报到</strong><span>皮肤管理</span><p>时间可编辑；请提前确认具体项目、价格、预计时长及是否可以当天化妆。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">10:30</span></div>
+                <div><strong>咨询与皮肤管理</strong><span>新论岘站</span><p>医院就在江南大路 478 号，建议预留 1.5-2.5 小时，具体按项目调整。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">13:00</span></div>
+                <div><strong>午餐并返回江南酒店</strong><span>江南</span><p>治疗后保持轻松，避免安排需要长时间暴晒的户外活动。</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">下午</span></div>
+                <div><strong>休息 / 补买遗漏物品</strong><span>江南站附近</span><p>若皮肤没有明显红肿，可在医生允许下进行轻松室内活动。</p></div>
+              </div>
+          </article></div>
+      <div class="note"><b>!</b><div><strong>皮肤管理提醒</strong><p>写真必须安排在皮肤管理之前。治疗后请按医院要求防晒、保湿，并避免桑拿、饮酒、剧烈运动及刺激性护肤；能否当天化妆取决于具体项目。</p></div></div>
+    </section>
+    <section id="map-section" style="margin-top:90px">
+      <div class="section-head"><h2>路线地图</h2><p>点击任意地点可以放大、查看备注，并在 Google 地图中打开。取得准确地址后，请替换发廊、化妆室、摄影棚和医院的临时位置。</p></div>
+      <div class="route-tools">
+        <button class="route-toggle active" data-route="all">全部路线</button>
+        <button class="route-toggle" data-route="day1">第 1 天 · 江南</button>
+        <button class="route-toggle" data-route="day2">第 2 天 · 狎鸥亭</button>
+        <button class="route-toggle" data-route="day3">第 3 天 · 皮肤管理</button>
+      </div>
+      <div class="map-wrap"><div class="places">
+        <div class="legend"><span><i style="background:#5578d9"></i>第 1 天</span><span><i style="background:#e5523d"></i>第 2 天</span><span><i style="background:#8552b8"></i>第 3 天</span></div>
+        
+          <button class="place-card" data-place="olive">
+            <span class="dot 美妆"></span>
+            <span><strong>Olive Young Gangnam Town</strong><small>429 Gangnam-daero, Seocho-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="adidas">
+            <span class="dot 运动"></span>
+            <span><strong>adidas Gangnam Brand Center</strong><small>470 Gangnam-daero, Gangnam-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="loewe">
+            <span class="dot 奢侈品"></span>
+            <span><strong>CASA LOEWE Seoul</strong><small>446 Apgujeong-ro, Gangnam-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="vivienne">
+            <span class="dot 奢侈品"></span>
+            <span><strong>Vivienne Westwood - Galleria Apgujeong</strong><small>Galleria WEST 3F, 343 Apgujeong-ro, Gangnam-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="hair">
+            <span class="dot 预约"></span>
+            <span><strong>剪发与造型</strong><small>请填写发廊地址</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="makeup">
+            <span class="dot 预约"></span>
+            <span><strong>化妆</strong><small>请填写化妆室地址</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="photoshoot">
+            <span class="dot 预约"></span>
+            <span><strong>写真拍摄</strong><small>请填写摄影棚地址</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="clinic">
+            <span class="dot 医疗"></span>
+            <span><strong>韩国林克整形医院 · 皮肤管理</strong><small>首尔江南区江南大路 478，济宇大厦 4 楼</small></span>
+            <span class="arrow">↗</span>
+          </button>
+      </div><div id="map"></div></div>
+      <div class="sources"><a href="https://viviennewestwood.kr/shop/cs/store/store_view?seq=1" target="_blank" rel="noreferrer">Vivienne Westwood official store list</a><a href="https://www.loewe.com/usa/en/stores-ourcasas/casa-loewe-seoul.html" target="_blank" rel="noreferrer">LOEWE official CASA Seoul page</a><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=146266" target="_blank" rel="noreferrer">adidas Gangnam tourism listing</a><a href="https://m.oliveyoung.co.kr/m/mtn/store/information/DAEA" target="_blank" rel="noreferrer">Olive Young official Gangnam Town page</a><a href="https://www.xiaohongshu.com/search_result?keyword=%E9%A6%96%E5%B0%94%E6%B1%9F%E5%8D%97%E8%B4%AD%E7%89%A9" target="_blank" rel="noreferrer">Xiaohongshu search used</a><a href="https://www.airport.kr/ap_en/1504/subview.do" target="_blank" rel="noreferrer">仁川机场巴士官方查询</a><a href="https://www.seoulairportbus.com/6009gangnamsinsa" target="_blank" rel="noreferrer">6009 机场巴士路线</a><a href="https://english.seoul.go.kr/service/entry/getting-to-seoul-from-incheon-airport/" target="_blank" rel="noreferrer">首尔市机场交通指南</a><a href="https://english.seoul.go.kr/service/movement/public-transportation/" target="_blank" rel="noreferrer">首尔公共交通指南</a><a href="https://english.seoul.go.kr/policy/transportation/climate-card/" target="_blank" rel="noreferrer">气候同行卡短期票</a><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736" target="_blank" rel="noreferrer">韩国购物退税官方指南</a></div>
+    </section>
+  </main>
+  <footer>资料核对于 2026 年 6 月。出发前请重新确认营业时间及预约要求。小红书网页版搜索需要登录，因此无法独立查看具体笔记内容。</footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const places=[{id:'airbnb',name:'江南 Airbnb',category:'住宿',address:'请填写 Airbnb 的准确地址',lat:37.4979,lng:127.0276,note:'目前暂时标在江南站，请取得准确地址后替换。',maps:'https://www.google.com/maps/search/?api=1&query=%E8%AF%B7%E5%A1%AB%E5%86%99+Airbnb+%E7%9A%84%E5%87%86%E7%A1%AE%E5%9C%B0%E5%9D%80'},{id:'olive',name:'Olive Young Gangnam Town',category:'美妆',address:'429 Gangnam-daero, Seocho-gu, Seoul',lat:37.5006,lng:127.0264,note:'共 1-3 层，可办理退税；官方页面显示营业时间为 10:00-22:30。',maps:'https://www.google.com/maps/search/?api=1&query=429+Gangnam-daero%2C+Seocho-gu%2C+Seoul'},{id:'adidas',name:'adidas Gangnam Brand Center',category:'运动',address:'470 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5048,lng:127.024,note:'大型多层门店；韩国旅游页面目前显示营业时间为 11:00-22:00。',maps:'https://www.google.com/maps/search/?api=1&query=470+Gangnam-daero%2C+Gangnam-gu%2C+Seoul'},{id:'loewe',name:'CASA LOEWE Seoul',category:'奢侈品',address:'446 Apgujeong-ro, Gangnam-gu, Seoul',lat:37.5261198,lng:127.0458126,note:'三层旗舰店；Google 地图目前显示 11:00 开门。',maps:'https://www.google.com/maps/search/?api=1&query=446+Apgujeong-ro%2C+Gangnam-gu%2C+Seoul'},{id:'vivienne',name:'Vivienne Westwood - Galleria Apgujeong',category:'奢侈品',address:'Galleria WEST 3F, 343 Apgujeong-ro, Gangnam-gu, Seoul',lat:37.5284,lng:127.0404,note:'选择狎鸥亭 Galleria 店，可与 CASA LOEWE 安排在同一条路线。',maps:'https://www.google.com/maps/search/?api=1&query=Galleria+WEST+3F%2C+343+Apgujeong-ro%2C+Gangnam-gu%2C+Seoul'},{id:'hair',name:'剪发与造型',category:'预约',address:'请填写发廊地址',lat:37.5228,lng:127.0385,note:'暂时标在狎鸥亭，建议预留 90 分钟，再前往化妆。',maps:'https://www.google.com/maps/search/?api=1&query=%E8%AF%B7%E5%A1%AB%E5%86%99%E5%8F%91%E5%BB%8A%E5%9C%B0%E5%9D%80'},{id:'makeup',name:'化妆',category:'预约',address:'请填写化妆室地址',lat:37.524,lng:127.0405,note:'暂时标在拍摄区域附近，建议预留 75-90 分钟。',maps:'https://www.google.com/maps/search/?api=1&query=%E8%AF%B7%E5%A1%AB%E5%86%99%E5%8C%96%E5%A6%86%E5%AE%A4%E5%9C%B0%E5%9D%80'},{id:'photoshoot',name:'写真拍摄',category:'预约',address:'请填写摄影棚地址',lat:37.5247,lng:127.0398,note:'暂时标在狎鸥亭，请用摄影棚的准确地址替换。',maps:'https://www.google.com/maps/search/?api=1&query=%E8%AF%B7%E5%A1%AB%E5%86%99%E6%91%84%E5%BD%B1%E6%A3%9A%E5%9C%B0%E5%9D%80'},{id:'clinic',name:'韩国林克整形医院 · 皮肤管理',category:'医疗',address:'首尔江南区江南大路 478，济宇大厦 4 楼',lat:37.5056,lng:127.0244,note:'新论岘站 3 号出口步行约 3 分钟。周一至周五 10:00-19:00，周六 10:00-17:00，周日及节假日休诊。',maps:'https://www.google.com/maps/search/?api=1&query=%E9%A6%96%E5%B0%94%E6%B1%9F%E5%8D%97%E5%8C%BA%E6%B1%9F%E5%8D%97%E5%A4%A7%E8%B7%AF+478%EF%BC%8C%E6%B5%8E%E5%AE%87%E5%A4%A7%E5%8E%A6+4+%E6%A5%BC'}];
+    const routeDefs={
+      day1:{color:'#5578d9',stops:['airbnb','adidas','olive','airbnb']},
+      day2:{color:'#e5523d',stops:['airbnb','hair','makeup','photoshoot','loewe','vivienne','airbnb']},
+      day3:{color:'#8552b8',stops:['airbnb','clinic']}
+    };
+    const map=L.map('map',{scrollWheelZoom:false}).setView([37.5125,127.027],13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+    const colors={Stay:'#171714',Beauty:'#8aa300',Sportswear:'#5578d9',Luxury:'#e5523d',Appointment:'#d98b00',Medical:'#8552b8'};
+    const markers={}, routeLines={}, placeById=Object.fromEntries(places.map(p=>[p.id,p]));
+    const routeNumbers={airbnb:'⌂',adidas:'1',olive:'2',hair:'1',makeup:'2',photoshoot:'3',loewe:'4',vivienne:'5',clinic:'1'};
+    places.forEach(p=>{
+      const routeColor=p.id==='clinic'?'#8552b8':(['hair','makeup','photoshoot','loewe','vivienne'].includes(p.id)?'#e5523d':(['adidas','olive'].includes(p.id)?'#5578d9':'#171714'));
+      const icon=L.divIcon({className:'',html:`<div style="width:28px;height:28px;display:grid;place-items:center;border:3px solid white;box-shadow:0 0 0 1px #111;background:${routeColor};color:white;border-radius:50%;font:700 12px DM Sans">${routeNumbers[p.id]||'•'}</div>`,iconSize:[28,28],iconAnchor:[14,14]});
+      markers[p.id]=L.marker([p.lat,p.lng],{icon}).addTo(map).bindPopup(`<div class="popup"><strong>${p.name}</strong><p>${p.address}</p><p>${p.note}</p><a href="${p.maps}" target="_blank">在 Google 地图中打开 ↗</a></div>`);
+    });
+    Object.entries(routeDefs).forEach(([key,r])=>{
+      routeLines[key]=L.polyline(r.stops.map(id=>[placeById[id].lat,placeById[id].lng]),{color:r.color,weight:5,opacity:.82,dashArray:key==='day3'?'10 8':null}).addTo(map);
+    });
+    function showRoute(which){
+      Object.entries(routeLines).forEach(([key,line])=>{if(which==='all'||which===key)line.addTo(map);else map.removeLayer(line);});
+      const ids=which==='all'?Object.values(routeDefs).flatMap(r=>r.stops):routeDefs[which].stops;
+      const bounds=L.latLngBounds([...new Set(ids)].map(id=>markers[id].getLatLng()));
+      map.fitBounds(bounds,{padding:[45,45]});
+      document.querySelectorAll('.route-toggle').forEach(b=>b.classList.toggle('active',b.dataset.route===which));
+    }
+    document.querySelectorAll('.route-toggle').forEach(b=>b.addEventListener('click',()=>showRoute(b.dataset.route)));
+    document.querySelectorAll('.place-card').forEach(el=>el.addEventListener('click',()=>{const m=markers[el.dataset.place];map.setView(m.getLatLng(),16);m.openPopup();}));
+    document.querySelectorAll('.time-edit').forEach(input=>{const k='seoul-'+input.dataset.key;input.value=localStorage.getItem(k)||input.value;input.addEventListener('change',()=>localStorage.setItem(k,input.value));});
+    showRoute('all');
+  </script>
+</body>
+</html>

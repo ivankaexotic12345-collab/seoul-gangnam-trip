@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>48 Hours in Gangnam, Seoul</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root{--ink:#171714;--cream:#f3efe6;--paper:#fffdf8;--lime:#d8f26a;--coral:#ff7a64;--blue:#85a6ff;--muted:#6e6a61;--line:#d8d2c6}
+    *{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font-family:"DM Sans",sans-serif}
+    .hero{min-height:58vh;padding:32px 5vw 48px;display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:end;background:linear-gradient(125deg,#191916 0 58%,#d8f26a 58%)}
+    .kicker{text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:var(--lime)} h1{font:600 clamp(54px,9vw,130px)/.82 "Playfair Display",serif;color:#fff;margin:24px 0;max-width:900px}
+    .hero p{color:#d9d5cc;max-width:620px;font-size:18px} .hero-panel{background:var(--paper);padding:26px;border:1px solid #111;box-shadow:10px 10px 0 #111}
+    .hero-panel strong{display:block;font-size:42px} .hero-panel span{display:block;margin-top:6px;color:var(--muted)} .hero-panel .mini{font-size:13px;margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
+    nav{position:sticky;top:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;background:rgba(255,253,248,.93);backdrop-filter:blur(12px);padding:15px 5vw;border-bottom:1px solid var(--line)}
+    nav a{color:var(--ink);text-decoration:none;font-weight:700} nav .links{display:flex;gap:20px;font-size:14px;align-items:center} .language{display:flex;border:1px solid var(--ink);margin-left:8px} .language a{padding:6px 9px;font-size:12px} .language a.active{background:var(--ink);color:#fff}
+    main{padding:70px 5vw} .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px} h2{font:600 clamp(36px,6vw,72px)/1 "Playfair Display",serif;margin:0} .section-head p{max-width:460px;color:var(--muted)}
+    .schedule{display:grid;grid-template-columns:repeat(3,1fr);gap:18px} .day-card{background:var(--paper);border:1px solid var(--ink);padding:22px}
+    .day-card header{min-height:100px;border-bottom:2px solid var(--ink)} .day-card header span{font-size:12px;text-transform:uppercase;letter-spacing:.16em} .day-card h3{font:600 25px "Playfair Display",serif;margin:12px 0}
+    .stop{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:18px 0;border-bottom:1px solid var(--line)} .stop:last-child{border:0} .time,.time-edit{font-weight:700;font-size:13px}
+    .time-edit{width:64px;border:0;border-bottom:2px solid var(--coral);background:transparent;padding:2px} .stop span:not(.time){display:block;color:var(--muted);font-size:12px;margin-top:4px} .stop p{font-size:13px;line-height:1.45;color:var(--muted);margin:8px 0 0}
+    .route-tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px} .route-toggle{border:1px solid var(--ink);background:var(--paper);padding:10px 14px;font-weight:700;cursor:pointer} .route-toggle.active{background:var(--ink);color:#fff}
+    .map-wrap{display:grid;grid-template-columns:360px 1fr;border:1px solid var(--ink);background:var(--paper);min-height:620px} #map{min-height:620px} .places{padding:18px;overflow:auto;max-height:620px} .legend{display:flex;gap:12px;flex-wrap:wrap;padding:4px 0 14px;border-bottom:2px solid var(--ink);font-size:12px;font-weight:700} .legend span{display:flex;align-items:center;gap:5px} .legend i{display:inline-block;width:10px;height:10px;border-radius:50%} .place-card{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;padding:17px 4px;display:grid;grid-template-columns:14px 1fr 20px;gap:12px;align-items:start;cursor:pointer}
+    .place-card:hover{background:#f5f1e8} .place-card small{display:block;color:var(--muted);margin-top:5px;line-height:1.35} .dot{width:11px;height:11px;border-radius:50%;margin-top:5px;background:var(--blue)} .dot.luxury{background:var(--coral)} .dot.beauty{background:var(--lime)} .dot.medical{background:#b17cff}
+    .note{margin-top:24px;padding:24px;background:#191916;color:#fff;display:grid;grid-template-columns:40px 1fr;gap:16px} .note b{font-size:26px;color:var(--coral)} .note p{margin:4px 0;color:#d8d4ca;line-height:1.55}
+    .guide-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px} .guide-card{background:var(--paper);border:1px solid var(--ink);padding:22px} .guide-card.recommended{box-shadow:8px 8px 0 var(--lime)} .guide-card .tag{display:inline-block;background:var(--ink);color:white;padding:5px 8px;font-size:11px;font-weight:700;letter-spacing:.08em} .guide-card h3{font:600 25px "Playfair Display",serif;margin:16px 0 8px} .guide-card .price{font-size:27px;font-weight:700;margin:10px 0} .guide-card p,.guide-card li{font-size:14px;line-height:1.55;color:var(--muted)} .guide-card ol,.guide-card ul{padding-left:20px} .guide-card li{margin:8px 0} .compare{overflow:auto;background:var(--paper);border:1px solid var(--ink)} .compare table{border-collapse:collapse;width:100%;min-width:720px} .compare th,.compare td{padding:15px;border-bottom:1px solid var(--line);text-align:left;font-size:13px} .compare th{background:#171714;color:#fff} .compare tr:last-child td{border-bottom:0} .route-list{display:grid;grid-template-columns:1fr 1fr;gap:16px} .route-step{background:var(--paper);border:1px solid var(--line);padding:18px} .route-step h3{margin:0 0 12px;font-size:17px} .route-step p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.5} .line-badge{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:50%;color:#fff;font-weight:700;margin-right:6px} .l2{background:#2ca34a} .l9{background:#b59b00} .bundang{background:#e0a800} .arex{background:#48a8d8} .money-list{display:grid;grid-template-columns:1.1fr .9fr;gap:18px} .check-card{background:#fffdf8;border:1px solid var(--ink);padding:22px} .check-row{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)} .check-row:last-child{border:0} .check-row b{color:#171714}
+    .sources{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px} .sources a{padding:9px 12px;border:1px solid var(--line);color:var(--ink);text-decoration:none;background:var(--paper);font-size:12px}
+    footer{padding:30px 5vw 70px;color:var(--muted);font-size:13px} .leaflet-popup-content-wrapper{border-radius:0} .popup a{color:#111;font-weight:700}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;background:linear-gradient(160deg,#191916 0 70%,#d8f26a 70%)}.schedule,.guide-grid,.route-list,.money-list{grid-template-columns:1fr}.map-wrap{grid-template-columns:1fr}.places{max-height:none}#map{min-height:480px}}
+    @media print{nav,.places{display:none}.hero{min-height:auto;background:#fff;padding:20px}h1,.hero p,.kicker{color:#111}.hero-panel{box-shadow:none}main{padding:25px}.map-wrap{display:block}#map{height:500px}}
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div><div class="kicker">SEOUL · GANGNAM · TWO NIGHTS</div><h1>48 hours, thoughtfully routed.</h1><p>A compact plan for shopping, hair, makeup, a photoshoot and skincare without crossing Seoul back and forth.</p></div>
+    <aside class="hero-panel"><strong>2 clusters</strong><span>Gangnam Station + Apgujeong / Cheongdam</span><div class="mini">Appointment times below are editable and saved on this device.</div></aside>
+  </section>
+  <nav><a href="#">Gangnam Plan</a><div class="links"><a href="#airport">Airport</a><a href="#transit">Subway</a><a href="#payment">Payments</a><a href="#route">Itinerary</a><a href="#map-section">Map</a><a href="javascript:window.print()">Print</a><span class="language"><a href="index.html">中文</a><a class="active" href="en.html">EN</a></span></div></nav>
+  <main>
+    <section id="airport">
+      <div class="section-head"><h2>From Incheon Airport to Gangnam</h2><p>With luggage, a direct route matters more than raw speed. This assumes your hotel is near Gangnam Station; verify the closest stop once you have its exact address.</p></div>
+      <div class="guide-grid">
+        <article class="guide-card recommended"><span class="tag">BEST OPTION · EASIEST WITH LUGGAGE</span><h3>Airport Bus 6009</h3><div class="price">KRW 17,000 / adult</div><p>Direct from Incheon Airport to Sinsa, Nonhyeon and Gangnam Station, with no luggage-heavy transfer.</p><ol><li>After immigration and baggage claim, go to an airport-bus ticket counter or kiosk.</li><li>Search for and purchase <strong>6009</strong>; obtain a physical ticket before boarding from the airport.</li><li>At T1, use the stop near No. 4 on Level 1; at T2, use the stop near No. 15 in the B1 Transportation Center. Follow the ticket and departure screens.</li><li>Use the Gangnam stop closest to your hotel and be ready to collect luggage before arrival.</li></ol><p><strong>Time: </strong>Usually 70-100 minutes, longer in traffic. Confirm the last departure on arrival.</p></article>
+        <article class="guide-card"><span class="tag">LOWER COST · ONE TRANSFER</span><h3>AREX All-Stop + Line 9</h3><div class="price">About KRW 5,000-7,000</div><p>Do not detour through Seoul Station. Transfer to Line 9 at Gimpo Airport.</p><ol><li>Buy or reload a T-money card at the airport station.</li><li>Take the AREX All-Stop train and get off at <strong>Gimpo Airport / 金浦Airport</strong>.</li><li>Transfer to the Line 9 express toward <strong>Sinnonhyeon / Sinnonhyeon</strong>。</li><li>Sinnonhyeon is one stop or a 10-15 minute walk from Gangnam Station; walk or take a short taxi depending on the hotel.</li></ol><p><strong>Time: </strong>About 75-95 minutes. Not recommended with large luggage or during rush hour.</p></article>
+        <article class="guide-card"><span class="tag">LATE NIGHT / GROUPS</span><h3>Airport Taxi</h3><div class="price">Usually KRW 70,000-100,000+</div><p>Convenient for two or three people, multiple bags, late arrival or a hotel far from the bus stop.</p><ul><li>Use only the official airport taxi queue.</li><li>Prepare the Korean address and confirm whether it is in Gangnam-gu or Seocho-gu.</li><li>Tolls, late-night surcharges and vehicle type affect the fare.</li><li>Decline unofficial drivers soliciting inside the arrivals hall.</li></ul></article>
+      </div>
+      <div class="note"><b>返</b><div><strong>Returning to the airport</strong><p>For Bus 6009 from the city, normally pay with T-money or cash when boarding. Leave Gangnam 4.5-5 hours before an international flight to cover traffic, check-in, tax refund and security. Ask the clinic about same-day travel if treatment includes injections, sedation or energy devices.</p></div></div>
+    </section>
+
+    <section id="transit" style="margin-top:90px">
+      <div class="section-head"><h2>Using the subway</h2><p>Tap in and out on Seoul's subway. Do not exit the gates when transferring; follow line colors and English station names. Use Naver Map or KakaoMap in Korea.</p></div>
+      <div class="route-list">
+        <article class="route-step"><h3>Gangnam hotel → adidas / Olive Young</h3><p><span class="line-badge l2">2</span><strong>江南站 Gangnam</strong></p><p>Both stores are on Gangnam-daero. Walking is simplest: visit adidas to the north first, then return along the main road to Olive Young.</p></article>
+        <article class="route-step"><h3>Gangnam Station → Apgujeong Rodeo</h3><p><span class="line-badge l2">2</span>Gangnam → Seolleung</p><p><span class="line-badge bundang">水</span>At Seolleung, transfer to the Suin-Bundang Line → Apgujeong Rodeo</p><p>About 25-35 minutes plus walking. A taxi may be more comfortable with clothing and makeup supplies.</p></article>
+        <article class="route-step"><h3>Hair → Makeup → Photoshoot</h3><p>These are placeholder pins. Choose appointments around Apgujeong Rodeo, Dosan Park or Cheongdam and compare all three exact addresses in Naver Map.</p><p>Allow 15-30 minutes between appointments, with extra buffer on rainy days and weekends.</p></article>
+        <article class="route-step"><h3>CASA LOEWE → Vivienne Westwood</h3><p>Both stops are in Apgujeong. Walk in good weather, or take a short taxi when tired or carrying shopping bags.</p><p>Show the English store name and floor to the mall information desk.</p></article>
+      </div>
+      <div class="compare" style="margin-top:18px"><table><thead><tr><th>Transport</th><th>How to buy</th><th>Best use</th><th>Notes</th></tr></thead><tbody>
+        <tr><td><strong>T-money</strong></td><td>Buy and reload at convenience stores or the airport</td><td>Recommended for a two-night trip with limited rides</td><td>One per person; tap on and off. Keep some cash as a reload backup.</td></tr>
+        <tr><td><strong>2-day Climate Card</strong></td><td>Physical card about KRW 3,000; 2-day pass KRW 8,000</td><td>Worth it only for frequent subway and bus use</td><td>Short-term validity begins on reload day; do not assume the Incheon Airport AREX section is included.</td></tr>
+        <tr><td><strong>Single-journey ticket</strong></td><td>Buy from subway ticket machines</td><td>Only useful for one ride</td><td>Costs KRW 100 more than a transit-card fare, plus a refundable KRW 500 deposit.</td></tr>
+        <tr><td><strong>Taxi</strong></td><td>Official street taxi, Kakao T or hotel call</td><td>Useful for styling, photoshoot and post-treatment travel</td><td>Keep the Korean address ready; Gangnam traffic is heavy at peak times.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="payment" style="margin-top:90px">
+      <div class="section-head"><h2>Payments and tax refunds</h2><p>Most chains, department stores, restaurants and clinics accept cards, but keep cash for transit, small shops and emergencies.</p></div>
+      <div class="money-list">
+        <article class="check-card"><h3>What to carry</h3>
+          <div class="check-row"><b>1</b><div><strong>Two physical cards from different banks</strong><br>Prefer Visa or Mastercard and enable international transactions.</div></div>
+          <div class="check-row"><b>2</b><div><strong>One T-money card per person</strong><br>Use for subway, buses and some convenience stores; do not share one card between two people.</div></div>
+          <div class="check-row"><b>3</b><div><strong>KRW 50,000-100,000 emergency cash</strong><br>For transit reloads, small shops, taxi backup and emergencies.</div></div>
+          <div class="check-row"><b>4</b><div><strong>Passport when required</strong><br>Tax-free shopping normally requires passport details; carry it for major purchases.</div></div>
+        </article>
+        <article class="check-card"><h3>Card and clinic payments</h3>
+          <div class="check-row"><b>₩</b><div><strong>Always choose KRW</strong><br>If asked to choose your home currency or Korean won, select KRW to avoid dynamic currency conversion.</div></div>
+          <div class="check-row"><b>医</b><div><strong>Confirm skincare pricing in advance</strong><br>Confirm the treatment, device or injectable brand, shots or dosage, numbing cream, tax, prescriptions and follow-up charges, plus your card limit.</div></div>
+          <div class="check-row"><b>退</b><div><strong>Retail tax refund</strong><br>Look for Tax Free signs. Minimum purchase is KRW 15,000; immediate refunds require each transaction below KRW 1,000,000 and total trip purchases no more than KRW 5,000,000. Show your passport and keep receipts.</div></div>
+          <div class="check-row"><b>税</b><div><strong>Do not assume skincare is tax-refundable</strong><br>Korea's VAT refund benefit for foreign cosmetic and aesthetic medical treatment ended in 2025. Ask Link Clinic for the final tax-inclusive 2026 price.</div></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="route" style="margin-top:90px">
+      <div class="section-head"><h2>Itinerary</h2><p>Day 1 covers late-opening Gangnam stores; Day 2 combines styling, photos and luxury shopping in Apgujeong; Day 3 is for skincare in Sinnonhyeon and an easy finish.</p></div>
+      <div class="schedule">
+          <article class="day-card">
+            <header><span>Day 1</span><h3>Arrival + Gangnam shopping</h3></header>
+            
+              <div class="stop">
+                <div><span class="time">15:00</span></div>
+                <div><strong>Check in and rest</strong><span>Airbnb</span><p>Allow time for airport transfer and luggage.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">17:00</span></div>
+                <div><strong>adidas Gangnam Brand Center</strong><span>adidas</span><p>Walk or take a short taxi/subway ride from Gangnam Station.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">18:30</span></div>
+                <div><strong>Olive Young Gangnam Town</strong><span>Olive Young</span><p>Visit after adidas; it stays open later and offers tax-refund service.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">20:15</span></div>
+                <div><strong>Dinner near Gangnam Station</strong><span>Flexible</span><p>Keep the first evening easy and near the hotel.</p></div>
+              </div>
+          </article>
+          <article class="day-card">
+            <header><span>Day 2</span><h3>Styling, photos + Apgujeong shopping</h3></header>
+            
+              <div class="stop">
+                <div><span class="time">08:00</span></div>
+                <div><strong>Haircut and styling</strong><span>Salon</span><p>Allow 90 minutes including consultation and styling.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">09:30</span></div>
+                <div><strong>Makeup session</strong><span>Makeup studio</span><p>Allow 75-90 minutes and bring reference photos.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">11:00</span></div>
+                <div><strong>Travel and touch-up buffer</strong><span>Apgujeong</span><p>Protect 30 minutes for delays, outfit changes and touch-ups.</p></div>
+              </div>
+              <div class="stop">
+                <div><input class="time-edit" data-key="photoshoot" value="11:30" aria-label="Photoshoot时间"></div>
+                <div><strong>Photoshoot</strong><span>Studio</span><p>Editable time; allow about two hours and finish before skincare to avoid visible redness.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">13:30</span></div>
+                <div><strong>Lunch and buffer</strong><span>Apgujeong</span><p>Do not schedule shopping immediately after the shoot.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">14:30</span></div>
+                <div><strong>CASA LOEWE Seoul</strong><span>LOEWE</span><p>Allow about 60 minutes at the flagship.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">15:45</span></div>
+                <div><strong>Galleria WEST Vivienne Westwood</strong><span>Vivienne Westwood</span><p>About 10-15 minutes from CASA LOEWE by taxi, or walk.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">17:15</span></div>
+                <div><strong>Cafe / return to hotel</strong><span>Rest buffer</span><p>Keep the evening free and rest before skincare.</p></div>
+              </div>
+          </article>
+          <article class="day-card">
+            <header><span>Day 3</span><h3>Skincare + easy finish</h3></header>
+            
+              <div class="stop">
+                <div><input class="time-edit" data-key="skincare" value="10:00" aria-label="Skincare treatment报到时间"></div>
+                <div><strong>Check in at Link Plastic Surgery Clinic</strong><span>Skincare treatment</span><p>Editable time; confirm the treatment, price, duration and whether same-day makeup is allowed.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">10:30</span></div>
+                <div><strong>Consultation and skincare</strong><span>Sinnonhyeon Station</span><p>The clinic is at 478 Gangnam-daero. Allow 1.5-2.5 hours depending on treatment.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">13:00</span></div>
+                <div><strong>Lunch and return to the Gangnam hotel</strong><span>江南</span><p>Take it easy afterward and avoid prolonged sun exposure.</p></div>
+              </div>
+              <div class="stop">
+                <div><span class="time">Afternoon</span></div>
+                <div><strong>Rest / pick up missed items</strong><span>Near Gangnam Station</span><p>If there is no significant redness, do light indoor activities if the clinician permits.</p></div>
+              </div>
+          </article></div>
+      <div class="note"><b>!</b><div><strong>Skincare reminder</strong><p>Schedule the photoshoot before skincare. After treatment, follow the clinic's instructions for sunscreen and hydration; avoid sauna, alcohol, strenuous exercise and irritating products. Same-day makeup depends on the treatment.</p></div></div>
+    </section>
+    <section id="map-section" style="margin-top:90px">
+      <div class="section-head"><h2>Route map</h2><p>Select a stop to zoom, read notes and open it in Google Maps. Replace the salon, makeup and studio placeholders once exact addresses are available.</p></div>
+      <div class="route-tools">
+        <button class="route-toggle active" data-route="all">All routes</button>
+        <button class="route-toggle" data-route="day1">Day 1 · Gangnam</button>
+        <button class="route-toggle" data-route="day2">Day 2 · Apgujeong</button>
+        <button class="route-toggle" data-route="day3">Day 3 · Skincare</button>
+      </div>
+      <div class="map-wrap"><div class="places">
+        <div class="legend"><span><i style="background:#5578d9"></i>Day 1</span><span><i style="background:#e5523d"></i>Day 2</span><span><i style="background:#8552b8"></i>Day 3</span></div>
+        
+          <button class="place-card" data-place="olive">
+            <span class="dot 美妆"></span>
+            <span><strong>Olive Young Gangnam Town</strong><small>429 Gangnam-daero, Seocho-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="adidas">
+            <span class="dot 运动"></span>
+            <span><strong>adidas Gangnam Brand Center</strong><small>470 Gangnam-daero, Gangnam-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="loewe">
+            <span class="dot 奢侈品"></span>
+            <span><strong>CASA LOEWE Seoul</strong><small>446 Apgujeong-ro, Gangnam-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="vivienne">
+            <span class="dot 奢侈品"></span>
+            <span><strong>Vivienne Westwood - Galleria Apgujeong</strong><small>Galleria WEST 3F, 343 Apgujeong-ro, Gangnam-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="hair">
+            <span class="dot 预约"></span>
+            <span><strong>Haircut and styling</strong><small>Enter salon address</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="makeup">
+            <span class="dot 预约"></span>
+            <span><strong>Makeup session</strong><small>Enter makeup studio address</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="photoshoot">
+            <span class="dot 预约"></span>
+            <span><strong>Photoshoot</strong><small>Enter studio address</small></span>
+            <span class="arrow">↗</span>
+          </button>
+          <button class="place-card" data-place="clinic">
+            <span class="dot 医疗"></span>
+            <span><strong>Link Plastic Surgery Clinic · Skincare</strong><small>4F Jewoo Building, 478 Gangnam-daero, Gangnam-gu, Seoul</small></span>
+            <span class="arrow">↗</span>
+          </button>
+      </div><div id="map"></div></div>
+      <div class="sources"><a href="https://viviennewestwood.kr/shop/cs/store/store_view?seq=1" target="_blank" rel="noreferrer">Vivienne Westwood official store list</a><a href="https://www.loewe.com/usa/en/stores-ourcasas/casa-loewe-seoul.html" target="_blank" rel="noreferrer">LOEWE official CASA Seoul page</a><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=146266" target="_blank" rel="noreferrer">adidas Gangnam tourism listing</a><a href="https://m.oliveyoung.co.kr/m/mtn/store/information/DAEA" target="_blank" rel="noreferrer">Olive Young official Gangnam Town page</a><a href="https://www.xiaohongshu.com/search_result?keyword=%E9%A6%96%E5%B0%94%E6%B1%9F%E5%8D%97%E8%B4%AD%E7%89%A9" target="_blank" rel="noreferrer">Xiaohongshu search used</a><a href="https://www.airport.kr/ap_en/1504/subview.do" target="_blank" rel="noreferrer">仁川Airport巴士官方查询</a><a href="https://www.seoulairportbus.com/6009gangnamsinsa" target="_blank" rel="noreferrer">Airport Bus 6009路线</a><a href="https://english.seoul.go.kr/service/entry/getting-to-seoul-from-incheon-airport/" target="_blank" rel="noreferrer">首尔市Airport交通指南</a><a href="https://english.seoul.go.kr/service/movement/public-transportation/" target="_blank" rel="noreferrer">首尔公共交通指南</a><a href="https://english.seoul.go.kr/policy/transportation/climate-card/" target="_blank" rel="noreferrer">气候同行卡短期票</a><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736" target="_blank" rel="noreferrer">韩国购物退税官方指南</a></div>
+    </section>
+  </main>
+  <footer>Information checked in June 2026. Reconfirm opening hours and appointment requirements before departure. Xiaohongshu desktop search required login, so individual posts could not be independently reviewed.</footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const places=[{id:'airbnb',name:'Gangnam hotel',category:'住宿',address:'Enter the exact hotel address',lat:37.4979,lng:127.0276,note:'Temporarily pinned at Gangnam Station; replace with the exact hotel address.',maps:'https://www.google.com/maps/search/?api=1&query=%E8%AF%B7%E5%A1%AB%E5%86%99+Airbnb+%E7%9A%84%E5%87%86%E7%A1%AE%E5%9C%B0%E5%9D%80'},{id:'olive',name:'Olive Young Gangnam Town',category:'美妆',address:'429 Gangnam-daero, Seocho-gu, Seoul',lat:37.5006,lng:127.0264,note:'共 1-3 层，可办理退税；官方页面显示营业时间为 10:00-22:30。',maps:'https://www.google.com/maps/search/?api=1&query=429+Gangnam-daero%2C+Seocho-gu%2C+Seoul'},{id:'adidas',name:'adidas Gangnam Brand Center',category:'运动',address:'470 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5048,lng:127.024,note:'大型多层门店；韩国旅游页面目前显示营业时间为 11:00-22:00。',maps:'https://www.google.com/maps/search/?api=1&query=470+Gangnam-daero%2C+Gangnam-gu%2C+Seoul'},{id:'loewe',name:'CASA LOEWE Seoul',category:'奢侈品',address:'446 Apgujeong-ro, Gangnam-gu, Seoul',lat:37.5261198,lng:127.0458126,note:'三层旗舰店；Google Map目前显示 11:00 开门。',maps:'https://www.google.com/maps/search/?api=1&query=446+Apgujeong-ro%2C+Gangnam-gu%2C+Seoul'},{id:'vivienne',name:'Vivienne Westwood - Galleria Apgujeong',category:'奢侈品',address:'Galleria WEST 3F, 343 Apgujeong-ro, Gangnam-gu, Seoul',lat:37.5284,lng:127.0404,note:'选择Apgujeong Galleria 店，可与 CASA LOEWE 安排在同一条路线。',maps:'https://www.google.com/maps/search/?api=1&query=Galleria+WEST+3F%2C+343+Apgujeong-ro%2C+Gangnam-gu%2C+Seoul'},{id:'hair',name:'Haircut and styling',category:'预约',address:'Enter salon address',lat:37.5228,lng:127.0385,note:'暂时标在Apgujeong，建议预留 90 分钟，再前往Makeup session。',maps:'https://www.google.com/maps/search/?api=1&query=%E8%AF%B7%E5%A1%AB%E5%86%99%E5%8F%91%E5%BB%8A%E5%9C%B0%E5%9D%80'},{id:'makeup',name:'Makeup session',category:'预约',address:'Enter makeup studio address',lat:37.524,lng:127.0405,note:'暂时标在拍摄区域附近，建议预留 75-90 分钟。',maps:'https://www.google.com/maps/search/?api=1&query=%E8%AF%B7%E5%A1%AB%E5%86%99%E5%8C%96%E5%A6%86%E5%AE%A4%E5%9C%B0%E5%9D%80'},{id:'photoshoot',name:'Photoshoot',category:'预约',address:'Enter studio address',lat:37.5247,lng:127.0398,note:'暂时标在Apgujeong，请用Studio的准确地址替换。',maps:'https://www.google.com/maps/search/?api=1&query=%E8%AF%B7%E5%A1%AB%E5%86%99%E6%91%84%E5%BD%B1%E6%A3%9A%E5%9C%B0%E5%9D%80'},{id:'clinic',name:'Link Plastic Surgery Clinic · Skincare',category:'医疗',address:'4F Jewoo Building, 478 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5056,lng:127.0244,note:'About 3 minutes from Sinnonhyeon Station Exit 3. Mon-Fri 10:00-19:00; Sat 10:00-17:00; closed Sundays and holidays.',maps:'https://www.google.com/maps/search/?api=1&query=%E9%A6%96%E5%B0%94%E6%B1%9F%E5%8D%97%E5%8C%BA%E6%B1%9F%E5%8D%97%E5%A4%A7%E8%B7%AF+478%EF%BC%8C%E6%B5%8E%E5%AE%87%E5%A4%A7%E5%8E%A6+4+%E6%A5%BC'}];
+    const routeDefs={
+      day1:{color:'#5578d9',stops:['airbnb','adidas','olive','airbnb']},
+      day2:{color:'#e5523d',stops:['airbnb','hair','makeup','photoshoot','loewe','vivienne','airbnb']},
+      day3:{color:'#8552b8',stops:['airbnb','clinic']}
+    };
+    const map=L.map('map',{scrollWheelZoom:false}).setView([37.5125,127.027],13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+    const colors={Stay:'#171714',Beauty:'#8aa300',Sportswear:'#5578d9',Luxury:'#e5523d',Appointment:'#d98b00',Medical:'#8552b8'};
+    const markers={}, routeLines={}, placeById=Object.fromEntries(places.map(p=>[p.id,p]));
+    const routeNumbers={airbnb:'⌂',adidas:'1',olive:'2',hair:'1',makeup:'2',photoshoot:'3',loewe:'4',vivienne:'5',clinic:'1'};
+    places.forEach(p=>{
+      const routeColor=p.id==='clinic'?'#8552b8':(['hair','makeup','photoshoot','loewe','vivienne'].includes(p.id)?'#e5523d':(['adidas','olive'].includes(p.id)?'#5578d9':'#171714'));
+      const icon=L.divIcon({className:'',html:`<div style="width:28px;height:28px;display:grid;place-items:center;border:3px solid white;box-shadow:0 0 0 1px #111;background:${routeColor};color:white;border-radius:50%;font:700 12px DM Sans">${routeNumbers[p.id]||'•'}</div>`,iconSize:[28,28],iconAnchor:[14,14]});
+      markers[p.id]=L.marker([p.lat,p.lng],{icon}).addTo(map).bindPopup(`<div class="popup"><strong>${p.name}</strong><p>${p.address}</p><p>${p.note}</p><a href="${p.maps}" target="_blank">Open in Google Maps ↗</a></div>`);
+    });
+    Object.entries(routeDefs).forEach(([key,r])=>{
+      routeLines[key]=L.polyline(r.stops.map(id=>[placeById[id].lat,placeById[id].lng]),{color:r.color,weight:5,opacity:.82,dashArray:key==='day3'?'10 8':null}).addTo(map);
+    });
+    function showRoute(which){
+      Object.entries(routeLines).forEach(([key,line])=>{if(which==='all'||which===key)line.addTo(map);else map.removeLayer(line);});
+      const ids=which==='all'?Object.values(routeDefs).flatMap(r=>r.stops):routeDefs[which].stops;
+      const bounds=L.latLngBounds([...new Set(ids)].map(id=>markers[id].getLatLng()));
+      map.fitBounds(bounds,{padding:[45,45]});
+      document.querySelectorAll('.route-toggle').forEach(b=>b.classList.toggle('active',b.dataset.route===which));
+    }
+    document.querySelectorAll('.route-toggle').forEach(b=>b.addEventListener('click',()=>showRoute(b.dataset.route)));
+    document.querySelectorAll('.place-card').forEach(el=>el.addEventListener('click',()=>{const m=markers[el.dataset.place];map.setView(m.getLatLng(),16);m.openPopup();}));
+    document.querySelectorAll('.time-edit').forEach(input=>{const k='seoul-'+input.dataset.key;input.value=localStorage.getItem(k)||input.value;input.addEventListener('change',()=>localStorage.setItem(k,input.value));});
+    showRoute('all');
+  </script>
+</body>
+</html>

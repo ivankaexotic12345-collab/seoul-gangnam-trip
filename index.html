@@ -16,7 +16,7 @@
     .hero p{color:#d9d5cc;max-width:620px;font-size:18px} .hero-panel{background:var(--paper);padding:26px;border:1px solid #111;box-shadow:10px 10px 0 #111}
     .hero-panel strong{display:block;font-size:42px} .hero-panel span{display:block;margin-top:6px;color:var(--muted)} .hero-panel .mini{font-size:13px;margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
     nav{position:sticky;top:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;background:rgba(255,253,248,.93);backdrop-filter:blur(12px);padding:15px 5vw;border-bottom:1px solid var(--line)}
-    nav a{color:var(--ink);text-decoration:none;font-weight:700} nav .links{display:flex;gap:20px;font-size:14px}
+    nav a{color:var(--ink);text-decoration:none;font-weight:700} nav .links{display:flex;gap:20px;font-size:14px;align-items:center} .language{display:flex;border:1px solid var(--ink);margin-left:8px} .language a{padding:6px 9px;font-size:12px} .language a.active{background:var(--ink);color:#fff}
     main{padding:70px 5vw} .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px} h2{font:600 clamp(36px,6vw,72px)/1 "Playfair Display",serif;margin:0} .section-head p{max-width:460px;color:var(--muted)}
     .schedule{display:grid;grid-template-columns:repeat(3,1fr);gap:18px} .day-card{background:var(--paper);border:1px solid var(--ink);padding:22px}
     .day-card header{min-height:100px;border-bottom:2px solid var(--ink)} .day-card header span{font-size:12px;text-transform:uppercase;letter-spacing:.16em} .day-card h3{font:600 25px "Playfair Display",serif;margin:12px 0}
@@ -38,7 +38,7 @@
     <div><div class="kicker">首尔 · 江南 · 两晚</div><h1>48 小时，路线刚刚好。</h1><p>把购物、剪发、化妆、写真和医疗预约集中在两个区域，减少来回穿越首尔的时间。</p></div>
     <aside class="hero-panel"><strong>2 个区域</strong><span>江南站 + 狎鸥亭 / 清潭洞</span><div class="mini">下方预约时间可以编辑，并会保存在本设备。</div></aside>
   </section>
-  <nav><a href="#">江南行程</a><div class="links"><a href="#airport">机场</a><a href="#transit">地铁</a><a href="#payment">支付</a><a href="#route">行程</a><a href="#map-section">地图</a><a href="javascript:window.print()">打印</a></div></nav>
+  <nav><a href="#">江南行程</a><div class="links"><a href="#airport">机场</a><a href="#transit">地铁</a><a href="#payment">支付</a><a href="#route">行程</a><a href="#map-section">地图</a><a href="javascript:window.print()">打印</a><span class="language"><a class="active" href="index.html">中文</a><a href="en.html">EN</a></span></div></nav>
   <main>
     <section id="airport">
       <div class="section-head"><h2>从仁川机场到江南</h2><p>带行李时，直达比单纯追求最快更重要。以下以 Airbnb 位于江南站附近为前提；取得准确地址后，应再次核对最近的巴士站。</p></div>

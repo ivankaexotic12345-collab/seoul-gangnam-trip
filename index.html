@@ -1,321 +1,280 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>首尔江南 48 小时行程</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <meta name="theme-color" content="#111111">
+  <title>首尔行程 · 8月1–3日</title>
   <style>
-    :root{--ink:#171714;--cream:#f3efe6;--paper:#fffdf8;--lime:#d8f26a;--coral:#ff7a64;--blue:#85a6ff;--muted:#6e6a61;--line:#d8d2c6}
-    *{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font-family:"DM Sans",sans-serif}
-    .hero{min-height:58vh;padding:32px 5vw 48px;display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:end;background:linear-gradient(125deg,#191916 0 58%,#d8f26a 58%)}
-    .kicker{text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:var(--lime)} h1{font:600 clamp(54px,9vw,130px)/.82 "Playfair Display",serif;color:#fff;margin:24px 0;max-width:900px}
-    .hero p{color:#d9d5cc;max-width:620px;font-size:18px} .hero-panel{background:var(--paper);padding:26px;border:1px solid #111;box-shadow:10px 10px 0 #111}
-    .hero-panel strong{display:block;font-size:42px} .hero-panel span{display:block;margin-top:6px;color:var(--muted)} .hero-panel .mini{font-size:13px;margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
-    nav{position:sticky;top:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;background:rgba(255,253,248,.93);backdrop-filter:blur(12px);padding:15px 5vw;border-bottom:1px solid var(--line)}
-    nav a{color:var(--ink);text-decoration:none;font-weight:700} nav .links{display:flex;gap:20px;font-size:14px;align-items:center} .language{display:flex;border:1px solid var(--ink);margin-left:8px} .language a{padding:6px 9px;font-size:12px} .language a.active{background:var(--ink);color:#fff}
-    main{padding:70px 5vw} .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px} h2{font:600 clamp(36px,6vw,72px)/1 "Playfair Display",serif;margin:0} .section-head p{max-width:460px;color:var(--muted)}
-    .schedule{display:grid;grid-template-columns:repeat(3,1fr);gap:18px} .day-card{background:var(--paper);border:1px solid var(--ink);padding:22px}
-    .day-card header{min-height:100px;border-bottom:2px solid var(--ink)} .day-card header span{font-size:12px;text-transform:uppercase;letter-spacing:.16em} .day-card h3{font:600 25px "Playfair Display",serif;margin:12px 0}
-    .stop{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:18px 0;border-bottom:1px solid var(--line)} .stop:last-child{border:0} .time,.time-edit{font-weight:700;font-size:13px}
-    .time-edit{width:64px;border:0;border-bottom:2px solid var(--coral);background:transparent;padding:2px} .stop span:not(.time){display:block;color:var(--muted);font-size:12px;margin-top:4px} .stop p{font-size:13px;line-height:1.45;color:var(--muted);margin:8px 0 0}
-    .map-list-link{display:inline-block;margin:0 0 16px;padding:12px 16px;background:var(--lime);border:1px solid var(--ink);box-shadow:5px 5px 0 var(--ink);color:var(--ink);text-decoration:none;font-weight:700} .route-tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px} .route-toggle{border:1px solid var(--ink);background:var(--paper);padding:10px 14px;font-weight:700;cursor:pointer} .route-toggle.active{background:var(--ink);color:#fff}
-    .map-wrap{display:grid;grid-template-columns:360px 1fr;border:1px solid var(--ink);background:var(--paper);min-height:620px} #map{min-height:620px} .places{padding:18px;overflow:auto;max-height:620px} .legend{display:flex;gap:12px;flex-wrap:wrap;padding:4px 0 14px;border-bottom:2px solid var(--ink);font-size:12px;font-weight:700} .legend span{display:flex;align-items:center;gap:5px} .legend i{display:inline-block;width:10px;height:10px;border-radius:50%} .place-card{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;padding:17px 4px;display:grid;grid-template-columns:14px 1fr 20px;gap:12px;align-items:start;cursor:pointer}
-    .place-card:hover{background:#f5f1e8} .place-card small{display:block;color:var(--muted);margin-top:5px;line-height:1.35} .dot{width:11px;height:11px;border-radius:50%;margin-top:5px;background:var(--blue)} .dot.luxury{background:var(--coral)} .dot.beauty{background:var(--lime)} .dot.medical{background:#b17cff}
-    .note{margin-top:24px;padding:24px;background:#191916;color:#fff;display:grid;grid-template-columns:40px 1fr;gap:16px} .note b{font-size:26px;color:var(--coral)} .note p{margin:4px 0;color:#d8d4ca;line-height:1.55}
-    .guide-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px} .guide-card{background:var(--paper);border:1px solid var(--ink);padding:22px} .guide-card.recommended{box-shadow:8px 8px 0 var(--lime)} .guide-card .tag{display:inline-block;background:var(--ink);color:white;padding:5px 8px;font-size:11px;font-weight:700;letter-spacing:.08em} .guide-card h3{font:600 25px "Playfair Display",serif;margin:16px 0 8px} .guide-card .price{font-size:27px;font-weight:700;margin:10px 0} .guide-card p,.guide-card li{font-size:14px;line-height:1.55;color:var(--muted)} .guide-card ol,.guide-card ul{padding-left:20px} .guide-card li{margin:8px 0} .compare{overflow:auto;background:var(--paper);border:1px solid var(--ink)} .compare table{border-collapse:collapse;width:100%;min-width:720px} .compare th,.compare td{padding:15px;border-bottom:1px solid var(--line);text-align:left;font-size:13px} .compare th{background:#171714;color:#fff} .compare tr:last-child td{border-bottom:0} .route-list{display:grid;grid-template-columns:1fr 1fr;gap:16px} .route-step{background:var(--paper);border:1px solid var(--line);padding:18px} .route-step h3{margin:0 0 12px;font-size:17px} .route-step p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.5} .line-badge{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:50%;color:#fff;font-weight:700;margin-right:6px} .l2{background:#2ca34a} .l9{background:#b59b00} .bundang{background:#e0a800} .arex{background:#48a8d8} .money-list{display:grid;grid-template-columns:1.1fr .9fr;gap:18px} .check-card{background:#fffdf8;border:1px solid var(--ink);padding:22px} .check-row{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)} .check-row:last-child{border:0} .check-row b{color:#171714}
-    .sources{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px} .sources a{padding:9px 12px;border:1px solid var(--line);color:var(--ink);text-decoration:none;background:var(--paper);font-size:12px}
-    footer{padding:30px 5vw 70px;color:var(--muted);font-size:13px} .leaflet-popup-content-wrapper{border-radius:0} .popup a{color:#111;font-weight:700}
-    @media(max-width:900px){.hero{grid-template-columns:1fr;background:linear-gradient(160deg,#191916 0 70%,#d8f26a 70%)}.schedule,.guide-grid,.route-list,.money-list{grid-template-columns:1fr}.map-wrap{grid-template-columns:1fr}.places{max-height:none}#map{min-height:480px}}
-    @media print{nav,.places{display:none}.hero{min-height:auto;background:#fff;padding:20px}h1,.hero p,.kicker{color:#111}.hero-panel{box-shadow:none}main{padding:25px}.map-wrap{display:block}#map{height:500px}}
+    :root{--bg:#f5f5f2;--card:#fff;--ink:#151515;--muted:#686868;--line:#deded8;--yellow:#ffe454;--blue:#1b63ff}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Noto Sans SC",sans-serif}
+    a{color:inherit} button{font:inherit} .wrap{max-width:920px;margin:auto;padding:14px 14px 90px}
+    .top{position:sticky;top:0;z-index:999;background:rgba(245,245,242,.96);backdrop-filter:blur(12px);padding:10px 0 12px;border-bottom:1px solid var(--line)}
+    .title-row{display:flex;align-items:center;justify-content:space-between;gap:12px} h1{font-size:22px;margin:0} .dates{font-size:13px;color:var(--muted);margin-top:3px}
+    .lang{border:1px solid var(--ink);background:#fff;border-radius:20px;padding:7px 11px;font-weight:700}
+    .quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+    .quick a{text-decoration:none;background:var(--ink);color:#fff;border-radius:12px;padding:11px 6px;text-align:center;font-size:13px;font-weight:700}
+    .quick a:first-child{background:var(--yellow);color:#111}
+    .notice{background:#fff7c7;border:1px solid #e7cf52;border-radius:12px;padding:10px 12px;margin:14px 0;font-size:13px;line-height:1.5}
+    h2{font-size:17px;margin:22px 0 10px} .day,.tool,.place{background:var(--card);border:1px solid var(--line);border-radius:15px;margin:9px 0;overflow:hidden}
+    .day-head{width:100%;border:0;background:#fff;display:grid;grid-template-columns:90px 1fr 20px;align-items:center;text-align:left;padding:15px}
+    .day-head span{color:var(--blue);font-weight:800} .day-head strong{font-size:16px} .closed .day-body{display:none} .closed .day-head b{transform:rotate(180deg)}
+    .stop{display:grid;grid-template-columns:105px 1fr;gap:10px;padding:13px 15px;border-top:1px solid var(--line)} time{font-size:13px;font-weight:800;color:var(--muted)}
+    .stop strong{font-size:15px} p{margin:5px 0;color:var(--muted);font-size:13px;line-height:1.45}
+    .mini-links{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap} .mini-links a{text-decoration:none;color:var(--blue);border:1px solid #b9cdfd;background:#f3f7ff;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:700}
+    #map{height:420px;width:100%;border-radius:15px;border:1px solid var(--line);background:#ddd} .map-open{display:block;margin-top:8px;background:var(--yellow);border-radius:12px;padding:13px;text-align:center;text-decoration:none;font-weight:800} .search{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;font-size:16px;margin-bottom:8px}
+    .place{padding:13px} .pin{border:0;background:transparent;padding:0;font-weight:800;text-align:left;cursor:pointer} .place p{margin:5px 0}
+    .tool{padding:14px} .tool h3{font-size:15px;margin:0 0 6px} .tool-links{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px} .tool-links a{background:#f0f0ec;border-radius:9px;padding:9px 10px;text-decoration:none;font-size:12px;font-weight:700}
+    .payment{display:grid;grid-template-columns:1fr 1fr;gap:9px} .warning{color:#9a2800;font-weight:700}
+    .bottom{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:#111;padding:9px 12px calc(9px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:8px}
+    .bottom a{color:#fff;text-decoration:none;border:1px solid #555;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:700} .bottom .primary{background:var(--yellow);color:#111;border-color:var(--yellow)}
+    [data-en]{display:none} body.en [data-zh]{display:none} body.en [data-en]{display:initial}
+    @media(max-width:620px){.quick{grid-template-columns:1fr 1fr} #map{height:330px} .payment{grid-template-columns:1fr} .stop{grid-template-columns:82px 1fr}}
   </style>
 </head>
 <body>
-  <section class="hero">
-    <div><div class="kicker">2026年8月1–3日 · 首尔 · 两晚</div><h1>48 小时，路线刚刚好。</h1><p>住宿在高丽大附近：落地先放行李再剪发，第二天完成妆造和证件照，第三天皮肤管理后返程。</p></div>
-    <aside class="hero-panel"><strong>住宿在安岩</strong><span>高丽大 · 地铁 6 号线</span><div class="mini">每天前往江南约 45-65 分钟；预约时间需按航班最终确认。</div></aside>
-  </section>
-  <nav><a href="#">首尔三日行程</a><div class="links"><a href="#airport">机场</a><a href="#transit">地铁</a><a href="#payment">支付</a><a href="#route">行程</a><a href="#map-section">地图</a><a href="javascript:window.print()">打印</a><span class="language"><a class="active" href="index.html">中文</a><a href="en.html">EN</a></span></div></nav>
-  <main>
-    <section id="airport">
-      <div class="section-head"><h2>从仁川机场到高丽大住宿</h2><p>住宿位于城北区安岩、高丽大附近，不在江南。带行李时首选 6102 机场巴士，先放行李再去明洞剪发。</p></div>
-      <div class="guide-grid">
-        <article class="guide-card recommended"><span class="tag">首选 · 行李最轻松</span><h3>6102 机场巴士</h3><div class="price">票价以出发前官方页面为准</div><p>6102 服务高丽大一带，适合直接前往安岩住宿，不必带行李横穿地铁站。</p><ol><li>入境及取行李后，到机场巴士售票柜台或自助机。</li><li>购买 <strong>6102</strong> 路线车票，并向工作人员出示住宿地址。</li><li>确认最接近高丽大/安岩的下车站及当天班次。</li><li>下车后步行或搭短程出租车到 57-8 Goryeodae-ro 11-gil。</li></ol><p><strong>时间：</strong>通常约 80-110 分钟，堵车时更久。8 月 1 日班次请在出发前复核。</p></article>
-        <article class="guide-card"><span class="tag">省钱 · 两次换乘</span><h3>AREX + 地铁 1号线 + 6号线</h3><div class="price">约 ₩5,000-7,000</div><p>适合轻装，但带大行李会比机场巴士辛苦。</p><ol><li>搭 AREX 普通列车至首尔站。</li><li>转地铁 1 号线到东庙前 Dongmyo。</li><li>转 6 号线到安岩 Anam 或高丽大 Korea University。</li><li>从车站步行或搭短程出租车到住宿。</li></ol><p><strong>时间：</strong>约 85-105 分钟，包含换乘步行。</p></article>
-        <article class="guide-card"><span class="tag">深夜 / 多人</span><h3>机场出租车</h3><div class="price">通常约 ₩70,000-100,000+</div><p>两至三人、多件行李或深夜抵达时最方便。</p><ul><li>只使用机场官方出租车排队区。</li><li>出示完整地址：57-8 Goryeodae-ro 11-gil, Seongbuk-gu。</li><li>高速公路费、深夜附加费和车型会影响总价。</li><li>不要接受到达大厅内主动拉客的非官方车辆。</li></ul></article>
-      </div>
-      <div class="note"><b>返</b><div><strong>8 月 3 日回机场</strong><p>退房后先寄存行李，皮肤管理与 T1 结束后返回高丽大取行李，再搭 6102 前往仁川机场。国际航班建议至少提前 4.5-5 小时从住宿附近出发；若治疗包含注射、镇静或能量类项目，请向医院确认当天出行注意事项。</p></div></div>
-    </section>
+<main class="wrap">
+  <header class="top">
+    <div class="title-row"><div><h1><span data-zh>首尔私人行程</span><span data-en>Private Seoul Trip</span></h1><div class="dates">2026 · AUG 1–3 · 2 NIGHTS</div></div><button class="lang" onclick="toggleLang()">中 / EN</button></div>
+    <nav class="quick">
+      <a href="https://maps.app.goo.gl/Mp1w7a4SKAbMYkbf6" target="_blank"><span data-zh>共享地图</span><span data-en>Shared map</span></a>
+      <a href="#plan"><span data-zh>时间表</span><span data-en>Schedule</span></a>
+      <a href="#map"><span data-zh>地图</span><span data-en>Map</span></a>
+      <a href="#tools"><span data-zh>交通工具</span><span data-en>Transit tools</span></a>
+    </nav>
+  </header>
 
-    <section id="transit" style="margin-top:90px">
-      <div class="section-head"><h2>地铁怎么搭</h2><p>首尔地铁进站和出站都要刷卡。换乘时不要出闸；跟随彩色线路和英文站名即可。韩国境内导航建议使用 Naver Map 或 KakaoMap。</p></div>
-      <div class="route-list">
-        <article class="route-step"><h3>高丽大住宿 → 江南</h3><p><span class="line-badge l2">6</span>安岩 → 新堂 Sindang</p><p><span class="line-badge l2">2</span>新堂换 2 号线 → 江南 Gangnam</p><p>约 50-60 分钟。早上赶预约或晚间疲劳时，出租车约 35-60 分钟，视交通而定。</p></article>
-        <article class="route-step"><h3>高丽大住宿 → 清潭 / 狎鸥亭</h3><p>公共交通通常需 45-60 分钟并换乘。8 月 2 日早上去 JOY187 建议直接出租车，减少妆造迟到风险。</p><p>晚上回住宿可从狎鸥亭罗德奥搭水仁·盆唐线转 6 号线，或直接出租车。</p></article>
-        <article class="route-step"><h3>JOY187 → 시현하다</h3><p>JOY187 在清潭洞，시현하다 Gangnam Original 在驿三。上午堵车时出租车约 25-40 分钟，预约之间至少留 30 分钟。</p><p>证件照若用于护照，请在 JOY187 明确要求自然妆，并且不要佩戴有色美瞳。</p></article>
-        <article class="route-step"><h3>CASA LOEWE → Vivienne Westwood</h3><p>两站都在狎鸥亭商圈。天气好、鞋子舒适时可步行；拍摄后疲劳或携带购物袋时，建议短程出租车。</p><p>在商场内找不到店时，向服务台出示英文店名和楼层。</p></article>
-      </div>
-      <div class="compare" style="margin-top:18px"><table><thead><tr><th>交通方式</th><th>怎么买</th><th>适合你们吗</th><th>注意</th></tr></thead><tbody>
-        <tr><td><strong>T-money</strong></td><td>便利店或机场购买并充值</td><td>最推荐：两晚、路线不多、还要搭机场交通</td><td>每人一张；上下车都要刷。保留少量现金充值作为备用。</td></tr>
-        <tr><td><strong>2 日气候同行卡</strong></td><td>实体卡约 ₩3,000，2 日票 ₩8,000</td><td>只有计划频繁搭地铁和巴士才划算</td><td>短期票充值当天立即生效；仁川机场 AREX 路段不应假设全部包含。</td></tr>
-        <tr><td><strong>单程票</strong></td><td>地铁站售票机购买</td><td>不建议，除非只搭一次</td><td>比交通卡票价多 ₩100，并需另付 ₩500 押金，到站后在退款机退回。</td></tr>
-        <tr><td><strong>出租车</strong></td><td>正规路边出租车、Kakao T 或酒店代叫</td><td>造型、写真和皮肤管理后移动时非常实用</td><td>把韩文地址准备好；高峰期江南道路会堵车。</td></tr>
-      </tbody></table></div>
-    </section>
+  <div class="notice"><b data-zh>住宿：</b><b data-en>Stay: </b>57-8 Goryeodae-ro 11-gil, Seongbuk-gu, Seoul 02850<br><span data-zh>所有地点按钮统一打开 Google Maps；共享清单可由你和朋友一起编辑。</span><span data-en>Every place button opens Google Maps. You and your friend can edit the shared list.</span></div>
 
-    <section id="payment" style="margin-top:90px">
-      <div class="section-head"><h2>付款与退税</h2><p>韩国大部分连锁店、百货店、餐厅和诊所都接受银行卡，但交通、街边小店和意外情况仍需要现金备用。</p></div>
-      <div class="money-list">
-        <article class="check-card"><h3>建议随身组合</h3>
-          <div class="check-row"><b>1</b><div><strong>两张不同银行的实体信用卡</strong><br>优先 Visa 或 Mastercard；提前开启境外交易通知。</div></div>
-          <div class="check-row"><b>2</b><div><strong>每人一张 T-money</strong><br>用于地铁、公交及部分便利店消费，不要两人共刷同一张。</div></div>
-          <div class="check-row"><b>3</b><div><strong>₩50,000-100,000 现金备用</strong><br>用于交通卡充值、小店、出租车备用和紧急情况。</div></div>
-          <div class="check-row"><b>4</b><div><strong>护照原件或按商店要求出示</strong><br>购物退税通常需要护照资料；贵重购物时务必携带。</div></div>
+  <h2 id="plan"><span data-zh>直接照着走</span><span data-en>Follow this plan</span></h2>
+  
+        <section class="day">
+          <button class="day-head" onclick="this.parentElement.classList.toggle('closed')">
+            <span>8/1 周六</span><strong>落地 + 剪发 + 江南</strong><b>⌃</b>
+          </button>
+          <div class="day-body">
+            <div class="stop">
+              <time>抵达后</time>
+              <div><strong>ICN → 住宿</strong><p>6102 机场巴士到高丽大学区域；放下行李后再出门。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=%E4%BD%8F%E5%AE%BF%20/%20Stay%2057-8%20Goryeodae-ro%2011-gil%2C%20Seongbuk-gu%2C%20Seoul%2002850" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>预约时间</time>
+              <div><strong>Parisian Hair</strong><p>先剪头发，预留 90–120 分钟。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=Parisian%20Hair%20Myeongdong%2031%20Myeongdong%204-gil%2C%20Jung-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>18:00</time>
+              <div><strong>lululemon → adidas</strong><p>两店沿江南大路步行。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=lululemon%20Gangnam%20Store%20458%20Gangnam-daero%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>19:30</time>
+              <div><strong>OLENS → Olive Young</strong><p>两店相邻；一起买美瞳、护肤并处理退税。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=OLENS%20Gangnam%20City%20428%20Gangnam-daero%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>21:00</time>
+              <div><strong>回住宿</strong><p>江南站 2 号线 → 新堂换 6 号线 → 安岩。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=%E4%BD%8F%E5%AE%BF%20/%20Stay%2057-8%20Goryeodae-ro%2011-gil%2C%20Seongbuk-gu%2C%20Seoul%2002850" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div></div>
+        </section>
+        <section class="day">
+          <button class="day-head" onclick="this.parentElement.classList.toggle('closed')">
+            <span>8/2 周日</span><strong>妆造 + 证件照 + 狎鸥亭</strong><b>⌃</b>
+          </button>
+          <div class="day-body">
+            <div class="stop">
+              <time>08:00</time>
+              <div><strong>住宿 → JOY187</strong><p>预约前至少 50 分钟出发，早上建议出租车。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=JOY187%2030%20Seolleung-ro%20152-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>09:00</time>
+              <div><strong>JOY187 妆发</strong><p>预留 2–2.5 小时，说明接下来拍证件照。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=JOY187%2030%20Seolleung-ro%20152-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>12:00</time>
+              <div><strong>sihyunhada 证件照</strong><p>预留 60–90 分钟；护照照不要戴有色美瞳。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=sihyunhada%20Gangnam%20Original%2053-6%20Teheran-ro%2019-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>14:30</time>
+              <div><strong>Gentle Monster</strong><p>到店后按体力调整停留时间。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=GENTLE%20MONSTER%20HAUS%20NOWHERE%20DOSAN%2050%20Apgujeong-ro%2046-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>15:40</time>
+              <div><strong>LOEWE → Vivienne Westwood</strong><p>同一购物区，步行或短程出租车。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=CASA%20LOEWE%20Seoul%20446%20Apgujeong-ro%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>17:30</time>
+              <div><strong>LE LABO</strong><p>新沙林荫道；太累就直接回住宿。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=LE%20LABO%20Garosu-gil%2028%20Apgujeong-ro%2010-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div></div>
+        </section>
+        <section class="day">
+          <button class="day-head" onclick="this.parentElement.classList.toggle('closed')">
+            <span>8/3 周一</span><strong>皮肤管理 + T1 + 机场</strong><b>⌃</b>
+          </button>
+          <div class="day-body">
+            <div class="stop">
+              <time>退房前</time>
+              <div><strong>寄存行李</strong><p>先确认住宿可寄存到几点。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=%E4%BD%8F%E5%AE%BF%20/%20Stay%2057-8%20Goryeodae-ro%2011-gil%2C%20Seongbuk-gu%2C%20Seoul%2002850" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>08:45</time>
+              <div><strong>住宿 → LINK Clinic</strong><p>10:00 报到，地铁约 50–60 分钟。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=LINK%20Clinic%20%C2%B7%20%E7%9A%AE%E8%82%A4%E7%AE%A1%E7%90%86%20478%20Gangnam-daero%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>10:00</time>
+              <div><strong>LINK Clinic 皮肤管理</strong><p>确认项目、时长、术后护肤和当天出行限制。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=LINK%20Clinic%20%C2%B7%20%E7%9A%AE%E8%82%A4%E7%AE%A1%E7%90%86%20478%20Gangnam-daero%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>13:00</time>
+              <div><strong>T1 HQ Shop</strong><p>皮肤状态允许再去，停留约 45–60 分钟。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=T1%20HQ%20Shop%20627%20Seolleung-ro%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>下午</time>
+              <div><strong>回住宿取行李</strong><p>至少预留 60 分钟返回高丽大学区域。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=%E4%BD%8F%E5%AE%BF%20/%20Stay%2057-8%20Goryeodae-ro%2011-gil%2C%20Seongbuk-gu%2C%20Seoul%2002850" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop">
+              <time>起飞前 4.5–5 小时</time>
+              <div><strong>6102 → ICN</strong><p>按当天班次提前到站；不要压最后一班。</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=%E4%BD%8F%E5%AE%BF%20/%20Stay%2057-8%20Goryeodae-ro%2011-gil%2C%20Seongbuk-gu%2C%20Seoul%2002850" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div></div>
+        </section>
+
+  <h2><span data-zh>所有地点地图</span><span data-en>All places</span></h2>
+  <iframe id="map" title="Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=57-8%20Goryeodae-ro%2011-gil%2C%20Seoul&output=embed"></iframe>
+  <a class="map-open" href="https://maps.app.goo.gl/Mp1w7a4SKAbMYkbf6" target="_blank"><span data-zh>在 Google Maps 查看全部 15 个地点 ↗</span><span data-en>Open all 15 places in Google Maps ↗</span></a>
+
+  <h2 id="tools"><span data-zh>出发前装好</span><span data-en>Install before departure</span></h2>
+  <article class="tool"><h3>Google Maps · <span data-zh>主地图</span><span data-en>Main map</span></h3><p data-zh>查看共享地点、收藏店铺和打开导航。</p><p data-en>Open the shared list, saved shops and directions.</p><div class="tool-links"><a href="https://maps.app.goo.gl/Mp1w7a4SKAbMYkbf6" target="_blank">Shared List</a><a href="https://apps.apple.com/us/app/google-maps/id585027354" target="_blank">iPhone</a><a href="https://play.google.com/store/apps/details?id=com.google.android.apps.maps" target="_blank">Android</a></div></article>
+  <article class="tool"><h3>Seoul Subway · <span data-zh>官方地铁</span><span data-en>Official subway</span></h3><div class="tool-links"><a href="https://apps.apple.com/hk/app/seoul-subway-official-app/id1174757125?l=en-GB" target="_blank">iPhone</a><a href="https://play.google.com/store/apps/details?id=com.seoulmetro.safety_keeper" target="_blank">Android</a><a href="https://english.visitseoul.net/subway" target="_blank">Guide</a></div></article>
+  <article class="tool"><h3>Kakao T / Uber · <span data-zh>叫车</span><span data-en>Taxi</span></h3><div class="tool-links"><a href="https://apps.apple.com/us/app/kakao-t/id981110422" target="_blank">Kakao T iPhone</a><a href="https://play.google.com/store/apps/details?id=com.kakao.taxi" target="_blank">Kakao T Android</a><a href="https://www.uber.com/kr/en/ride/" target="_blank">Uber Korea</a></div></article>
+  <article class="tool"><h3>6102 · ICN ↔ Korea University</h3><p data-zh>出发当天必须重新查看班次和机场上车点。</p><p data-en>Recheck the timetable and airport platform on travel day.</p><div class="tool-links"><a href="https://www.calt.co.kr/m/EN/limousine/03.php" target="_blank">6102 Official</a><a href="https://www.airport.kr/ap_en/1504/subview.do" target="_blank">ICN Bus Guide</a><a href="https://oia.korea.ac.kr/oia/intro/location_limousine.do" target="_blank">Korea Univ Guide</a></div></article>
+
+  <h2><span data-zh>付款与交通卡</span><span data-en>Payments and transit card</span></h2>
+  <div class="payment">
+    <article class="tool"><h3>T-money</h3><p data-zh>最简单：机场便利店购买实体卡并充值。地铁和巴士上下车都要刷卡。余额不足前在便利店充值。</p><p data-en>Buy and top up a physical card at an airport convenience store. Tap when entering and leaving transit.</p><div class="tool-links"><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140663" target="_blank">Official guide</a></div></article>
+    <article class="tool"><h3><span data-zh>信用卡 + 现金</span><span data-en>Cards + cash</span></h3><p data-zh>商店和诊所优先刷 Visa/Mastercard；准备少量韩元用于交通卡充值、小店或机器。付款时选择 KRW，不要选择动态美元/港币换算。</p><p data-en>Use Visa/Mastercard at shops and clinics. Keep KRW cash for top-ups and small vendors. Choose KRW, not dynamic currency conversion.</p></article>
+  </div>
+  <div class="notice warning"><span data-zh>皮肤管理前先确认最终价格、项目内容和退款规则；不要只依据翻译口头同意。</span><span data-en>Before skincare, confirm the final price, treatment and refund policy in writing.</span></div>
+
+  <h2><span data-zh>地点清单</span><span data-en>Place list</span></h2>
+  <input class="search" id="search" placeholder="Search / 搜索店名" oninput="filterPlaces(this.value)">
+  <div id="places">
+        <article class="place" data-name="住宿 / stay 57-8 goryeodae-ro 11-gil, seongbuk-gu, seoul 02850">
+          <button class="pin" onclick="focusPlace('stay')">住宿 / Stay</button>
+          <p>57-8 Goryeodae-ro 11-gil, Seongbuk-gu, Seoul 02850</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=%E4%BD%8F%E5%AE%BF%20/%20Stay%2057-8%20Goryeodae-ro%2011-gil%2C%20Seongbuk-gu%2C%20Seoul%2002850" target="_blank">Google Maps ↗</a></div>
         </article>
-        <article class="check-card"><h3>刷卡时这样选</h3>
-          <div class="check-row"><b>₩</b><div><strong>始终选择 KRW 韩元结算</strong><br>如果机器询问使用美元或韩元，选择 KRW，避免动态货币转换的不利汇率。</div></div>
-          <div class="check-row"><b>医</b><div><strong>皮肤管理费用提前确认</strong><br>询问项目名称、机器或注射产品、发数或剂量、麻膏、税费、处方药和复诊是否另收费，并确认银行卡单笔限额。</div></div>
-          <div class="check-row"><b>退</b><div><strong>普通购物退税</strong><br>寻找 Tax Free 标识，单笔消费至少 ₩15,000；可即时退税的单笔金额须低于 ₩1,000,000，全程累计不超过 ₩5,000,000。结账时出示护照并保存收据。</div></div>
-          <div class="check-row"><b>税</b><div><strong>不要预设皮肤管理可以退税</strong><br>韩国针对外国游客的整形及医美医疗增值税退税优惠已于 2025 年底到期。2026 年请向林克医院确认最终含税价格。</div></div>
+        <article class="place" data-name="parisian hair myeongdong 31 myeongdong 4-gil, jung-gu, seoul">
+          <button class="pin" onclick="focusPlace('hair')">Parisian Hair Myeongdong</button>
+          <p>31 Myeongdong 4-gil, Jung-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=Parisian%20Hair%20Myeongdong%2031%20Myeongdong%204-gil%2C%20Jung-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
         </article>
-      </div>
-    </section>
+        <article class="place" data-name="lululemon gangnam store 458 gangnam-daero, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('lulu')">lululemon Gangnam Store</button>
+          <p>458 Gangnam-daero, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=lululemon%20Gangnam%20Store%20458%20Gangnam-daero%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="adidas gangnam brand center 470 gangnam-daero, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('adidas')">adidas Gangnam Brand Center</button>
+          <p>470 Gangnam-daero, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=adidas%20Gangnam%20Brand%20Center%20470%20Gangnam-daero%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="olens gangnam city 428 gangnam-daero, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('olens')">OLENS Gangnam City</button>
+          <p>428 Gangnam-daero, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=OLENS%20Gangnam%20City%20428%20Gangnam-daero%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="olive young gangnam town 429 gangnam-daero, seocho-gu, seoul">
+          <button class="pin" onclick="focusPlace('olive')">Olive Young Gangnam Town</button>
+          <p>429 Gangnam-daero, Seocho-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=Olive%20Young%20Gangnam%20Town%20429%20Gangnam-daero%2C%20Seocho-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="joy187 30 seolleung-ro 152-gil, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('joy')">JOY187</button>
+          <p>30 Seolleung-ro 152-gil, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=JOY187%2030%20Seolleung-ro%20152-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="sihyunhada gangnam original 53-6 teheran-ro 19-gil, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('photo')">sihyunhada Gangnam Original</button>
+          <p>53-6 Teheran-ro 19-gil, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=sihyunhada%20Gangnam%20Original%2053-6%20Teheran-ro%2019-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="gentle monster haus nowhere dosan 50 apgujeong-ro 46-gil, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('gentle')">GENTLE MONSTER HAUS NOWHERE DOSAN</button>
+          <p>50 Apgujeong-ro 46-gil, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=GENTLE%20MONSTER%20HAUS%20NOWHERE%20DOSAN%2050%20Apgujeong-ro%2046-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="casa loewe seoul 446 apgujeong-ro, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('loewe')">CASA LOEWE Seoul</button>
+          <p>446 Apgujeong-ro, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=CASA%20LOEWE%20Seoul%20446%20Apgujeong-ro%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="vivienne westwood · galleria west 3f 343 apgujeong-ro, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('vivienne')">Vivienne Westwood · Galleria WEST 3F</button>
+          <p>343 Apgujeong-ro, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=Vivienne%20Westwood%20%C2%B7%20Galleria%20WEST%203F%20343%20Apgujeong-ro%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="le labo garosu-gil 28 apgujeong-ro 10-gil, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('lelabo')">LE LABO Garosu-gil</button>
+          <p>28 Apgujeong-ro 10-gil, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=LE%20LABO%20Garosu-gil%2028%20Apgujeong-ro%2010-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="link clinic · 皮肤管理 478 gangnam-daero, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('clinic')">LINK Clinic · 皮肤管理</button>
+          <p>478 Gangnam-daero, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=LINK%20Clinic%20%C2%B7%20%E7%9A%AE%E8%82%A4%E7%AE%A1%E7%90%86%20478%20Gangnam-daero%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="t1 hq shop 627 seolleung-ro, gangnam-gu, seoul">
+          <button class="pin" onclick="focusPlace('t1')">T1 HQ Shop</button>
+          <p>627 Seolleung-ro, Gangnam-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=T1%20HQ%20Shop%20627%20Seolleung-ro%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article>
+        <article class="place" data-name="hybe headquarters · 可选 42 hangang-daero, yongsan-gu, seoul">
+          <button class="pin" onclick="focusPlace('hybe')">HYBE Headquarters · 可选</button>
+          <p>42 Hangang-daero, Yongsan-gu, Seoul</p>
+          <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=HYBE%20Headquarters%20%C2%B7%20%E5%8F%AF%E9%80%89%2042%20Hangang-daero%2C%20Yongsan-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+        </article></div>
+</main>
 
-    <section id="route" style="margin-top:90px">
-      <div class="section-head"><h2>行程安排</h2><p>第 1 天落地后先在明洞剪发，再入住江南并逛江南大路；第 2 天完成 JOY187 妆造和 시현하다 证件照，再集中逛狎鸥亭；第 3 天做皮肤管理并去 T1 粉丝店。</p></div>
-      <div class="schedule">
-          <article class="day-card">
-            <header><span>第 1 天 · 8月1日 周六</span><h3>抵达、放行李、剪发 + 江南购物</h3></header>
-            
-              <div class="stop">
-                <div><span class="time">抵达后</span></div>
-                <div><strong>6102 机场巴士前往高丽大</strong><span>仁川机场 → 高丽大</span><p>入境取行李后搭 6102，在最接近住宿的高丽大站点下车，再步行或短程出租车到住宿。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">先做</span></div>
-                <div><strong>住宿放行李 / 办理入住</strong><span>57-8 Goryeodae-ro 11-gil</span><p>不要拖着行李去发廊。若未到入住时间，请先确认可寄存行李。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">预约时间</span></div>
-                <div><strong>Parisien Hair 剪发</strong><span>明洞</span><p>从安岩搭 6 号线到三角地换 4 号线至明洞，约 35-45 分钟；带时间压力时直接出租车。预留 90-120 分钟。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">傍晚</span></div>
-                <div><strong>前往江南大路</strong><span>明洞 → 江南</span><p>地铁约 40-50 分钟；若剪发结束较晚，优先出租车并接受晚高峰堵车。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">18:00</span></div>
-                <div><strong>lululemon → adidas</strong><span>江南大路</span><p>两店门牌分别为 458 和 470，步行即可完成。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">19:30</span></div>
-                <div><strong>OLENS → Olive Young</strong><span>江南站</span><p>OLENS 428 与 Olive Young 429 相邻，最后统一购买美瞳和护肤品并办理退税。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">21:00</span></div>
-                <div><strong>返回高丽大住宿</strong><span>江南 → 安岩</span><p>地铁 2 号线江南站至新堂换 6 号线，约 50-60 分钟；疲劳时搭出租车。</p></div>
-              </div>
-          </article>
-          <article class="day-card">
-            <header><span>第 2 天 · 8月2日 周日</span><h3>JOY187 妆造、证件照 + 狎鸥亭购物</h3></header>
-            
-              <div class="stop">
-                <div><span class="time">08:00</span></div>
-                <div><strong>住宿出发去 JOY187</strong><span>安岩 → 清潭洞</span><p>周日早上出租车约 30-45 分钟，建议预约前至少提前 50 分钟出发。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">09:00</span></div>
-                <div><strong>JOY187 妆发造型</strong><span>清潭洞</span><p>建议预留 2-2.5 小时；提前发送证件照参考和服装领口照片，并确认周日预约。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">11:15</span></div>
-                <div><strong>前往 시현하다</strong><span>清潭 → 驿三</span><p>出租车约 25-40 分钟，堵车时更久；至少留 30 分钟缓冲。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">12:00</span></div>
-                <div><strong>시현하다 证件照</strong><span>Gangnam Original</span><p>预约 60-90 分钟。若用于护照，须白底、不可戴有色美瞳，并减少过度修图。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">13:30</span></div>
-                <div><strong>午餐并返回狎鸥亭</strong><span>狎鸥亭</span><p>午餐后开始同区域购物，避免反复跨区。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">14:30</span></div>
-                <div><strong>Gentle Monster HAUS DOSAN</strong><span>岛山公园</span><p>建议 45-60 分钟，热门时段可能排队。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">15:40</span></div>
-                <div><strong>CASA LOEWE → Vivienne Westwood</strong><span>狎鸥亭</span><p>先 LOEWE，再到 Galleria WEST 3F；两站可步行或短程出租车。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">17:30</span></div>
-                <div><strong>lululemon Cheongdam / Le Labo</strong><span>二选一或都去</span><p>体力好可去清潭 lululemon；想买香水则去新沙 Le Labo。两者方向不同，不要勉强全塞。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">19:00</span></div>
-                <div><strong>返回高丽大住宿</strong><span>狎鸥亭 / 新沙 → 安岩</span><p>地铁约 45-60 分钟；保留卸妆、休息和第二天皮肤管理前的护肤缓冲。</p></div>
-              </div>
-          </article>
-          <article class="day-card">
-            <header><span>第 3 天 · 8月3日 周一</span><h3>皮肤管理、T1 + 返程</h3></header>
-            
-              <div class="stop">
-                <div><span class="time">出门前</span></div>
-                <div><strong>退房并寄存行李</strong><span>高丽大住宿</span><p>先向住宿确认周一可寄存到几点；护照、退税单和随身物品带好。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">08:45</span></div>
-                <div><strong>前往林克医院</strong><span>安岩 → 新论岘</span><p>地铁约 50-60 分钟；为 10:00 报到建议 08:45 左右出发。</p></div>
-              </div>
-              <div class="stop">
-                <div><input class="time-edit" data-key="skincare" value="10:00" aria-label="皮肤管理报到时间"></div>
-                <div><strong>韩国林克整形医院报到</strong><span>皮肤管理</span><p>时间可编辑；请提前确认具体项目、价格、预计时长及是否可以当天化妆。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">10:30</span></div>
-                <div><strong>咨询与皮肤管理</strong><span>新论岘站</span><p>医院就在江南大路 478 号，建议预留 1.5-2.5 小时，具体按项目调整。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">13:00</span></div>
-                <div><strong>T1 HQ Shop</strong><span>论岘 / 宣靖陵</span><p>店铺约 12:00 开门；皮肤管理后搭短程出租车，室内轻松参观约 45-60 分钟。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">下午</span></div>
-                <div><strong>返回高丽大取行李</strong><span>江南 → 安岩</span><p>若皮肤没有明显红肿，可在医生允许下进行轻松室内活动；返程交通至少预留 60 分钟。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">返机场</span></div>
-                <div><strong>6102 机场巴士</strong><span>高丽大 → 仁川机场</span><p>国际航班建议在起飞前至少 4.5-5 小时从住宿附近出发。</p></div>
-              </div>
-              <div class="stop">
-                <div><span class="time">取消</span></div>
-                <div><strong>HYBE 总部支线</strong><span>龙山</span><p>三天行程已跨城多次，且周一需皮肤管理与返机场；除非航班很晚，否则不建议加入。</p></div>
-              </div>
-          </article></div>
-      <div class="note"><b>!</b><div><strong>皮肤管理提醒</strong><p>妆造和证件照已安排在皮肤管理前一天。治疗后请按医院要求防晒、保湿，并避免桑拿、饮酒、剧烈运动及刺激性护肤；能否当天化妆取决于具体项目。</p></div></div>
-    </section>
-    <section id="map-section" style="margin-top:90px">
-      <div class="section-head"><h2>路线地图</h2><p>点击任意地点可以放大、查看备注，并在 Google 地图中打开。HYBE 位于龙山，明显偏离江南主路线，因此标为可选支线。</p></div>
-      <a class="map-list-link" href="https://maps.app.goo.gl/Mp1w7a4SKAbMYkbf6" target="_blank" rel="noreferrer">打开可共同编辑的 Google Maps 清单 ↗</a>
-      <div class="route-tools">
-        <button class="route-toggle active" data-route="all">全部路线</button>
-        <button class="route-toggle" data-route="day1">8月1日 · 剪发购物</button>
-        <button class="route-toggle" data-route="day2">8月2日 · 妆造证件照</button>
-        <button class="route-toggle" data-route="day3">8月3日 · 皮肤管理</button>
-      </div>
-      <div class="map-wrap"><div class="places">
-        <div class="legend"><span><i style="background:#5578d9"></i>第 1 天</span><span><i style="background:#e5523d"></i>第 2 天</span><span><i style="background:#8552b8"></i>第 3 天</span></div>
-        
-          <button class="place-card" data-place="olive">
-            <span class="dot 美妆"></span>
-            <span><strong>Olive Young Gangnam Town</strong><small>429 Gangnam-daero, Seocho-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="olens">
-            <span class="dot 美妆"></span>
-            <span><strong>OLENS Gangnam City</strong><small>428 Gangnam-daero, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="lululemon">
-            <span class="dot 运动"></span>
-            <span><strong>lululemon Gangnam Flagship</strong><small>458 Gangnam-daero, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="adidas">
-            <span class="dot 运动"></span>
-            <span><strong>adidas Gangnam Brand Center</strong><small>470 Gangnam-daero, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="loewe">
-            <span class="dot 奢侈品"></span>
-            <span><strong>CASA LOEWE Seoul</strong><small>446 Apgujeong-ro, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="gentle">
-            <span class="dot 时尚"></span>
-            <span><strong>Gentle Monster HAUS DOSAN</strong><small>50 Apgujeong-ro 46-gil, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="lelabo">
-            <span class="dot 香氛"></span>
-            <span><strong>Le Labo Garosu-gil</strong><small>28 Apgujeong-ro 10-gil, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="vivienne">
-            <span class="dot 奢侈品"></span>
-            <span><strong>Vivienne Westwood - Galleria Apgujeong</strong><small>Galleria WEST 3F, 343 Apgujeong-ro, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="parisien">
-            <span class="dot 预约"></span>
-            <span><strong>Parisien Hair Myeongdong</strong><small>31 Myeongdong 4-gil, Jung-gu, Seoul, 2F</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="joy187">
-            <span class="dot 预约"></span>
-            <span><strong>JOY187 Cheongdam</strong><small>3F, 30 Seolleung-ro 152-gil, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="sihyunhada">
-            <span class="dot 预约"></span>
-            <span><strong>시현하다 Gangnam Original</strong><small>53-6 Teheran-ro 19-gil, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="t1">
-            <span class="dot 粉丝打卡"></span>
-            <span><strong>T1 HQ Shop</strong><small>627 Seolleung-ro, Gangnam-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="hybe">
-            <span class="dot 粉丝打卡"></span>
-            <span><strong>HYBE Headquarters</strong><small>42 Hangang-daero, Yongsan-gu, Seoul</small></span>
-            <span class="arrow">↗</span>
-          </button>
-          <button class="place-card" data-place="clinic">
-            <span class="dot 医疗"></span>
-            <span><strong>韩国林克整形医院 · 皮肤管理</strong><small>首尔江南区江南大路 478，济宇大厦 4 楼</small></span>
-            <span class="arrow">↗</span>
-          </button>
-      </div><div id="map"></div></div>
-      <div class="sources"><a href="https://viviennewestwood.kr/shop/cs/store/store_view?seq=1" target="_blank" rel="noreferrer">Vivienne Westwood official store list</a><a href="https://www.loewe.com/usa/en/stores-ourcasas/casa-loewe-seoul.html" target="_blank" rel="noreferrer">LOEWE official CASA Seoul page</a><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=146266" target="_blank" rel="noreferrer">adidas Gangnam tourism listing</a><a href="https://m.oliveyoung.co.kr/m/mtn/store/information/DAEA" target="_blank" rel="noreferrer">Olive Young official Gangnam Town page</a><a href="https://www.xiaohongshu.com/search_result?keyword=%E9%A6%96%E5%B0%94%E6%B1%9F%E5%8D%97%E8%B4%AD%E7%89%A9" target="_blank" rel="noreferrer">Xiaohongshu search used</a><a href="https://www.airport.kr/ap_en/1504/subview.do" target="_blank" rel="noreferrer">仁川机场巴士官方查询</a><a href="https://www.seoulairportbus.com/6009gangnamsinsa" target="_blank" rel="noreferrer">6009 机场巴士路线</a><a href="https://www.calt.co.kr/m/limousine/03.php" target="_blank" rel="noreferrer">6102 高丽大机场巴士</a><a href="https://english.seoul.go.kr/service/entry/getting-to-seoul-from-incheon-airport/" target="_blank" rel="noreferrer">首尔市机场交通指南</a><a href="https://english.seoul.go.kr/service/movement/public-transportation/" target="_blank" rel="noreferrer">首尔公共交通指南</a><a href="https://english.seoul.go.kr/policy/transportation/climate-card/" target="_blank" rel="noreferrer">气候同行卡短期票</a><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736" target="_blank" rel="noreferrer">韩国购物退税官方指南</a><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=146783" target="_blank" rel="noreferrer">OLENS Gangnam City</a><a href="https://www.gentlemonster.com/us/stories/haus-dosan" target="_blank" rel="noreferrer">Gentle Monster HAUS DOSAN</a><a href="https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=142304" target="_blank" rel="noreferrer">Le Labo Garosu-gil</a><a href="https://corporate.lululemon.com/media/our-stories/2025/lululemon-debuts-new-store-design-concept" target="_blank" rel="noreferrer">lululemon Gangnam flagship</a><a href="https://sihyunhada.com/studio1" target="_blank" rel="noreferrer">시현하다 Gangnam Original</a><a href="https://en.shop-t1.gg/" target="_blank" rel="noreferrer">T1 HQ Shop</a></div>
-    </section>
-  </main>
-  <footer>行程日期：2026 年 8 月 1–3 日。资料更新于 2026 年 6 月；出发前请重新确认营业时间、周日预约和机场巴士班次。</footer>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    const places=[{id:'airbnb',name:'高丽大住宿',category:'住宿',address:'57-8 Goryeodae-ro 11-gil, Seongbuk-gu, Seoul 02850',lat:37.58755,lng:127.0214,note:'位于安岩/高丽大生活圈，靠近地铁 6 号线安岩站与高丽大站；每天往返江南需约 45-65 分钟。',maps:'https://www.google.com/maps/search/?api=1&query=57-8+Goryeodae-ro+11-gil%2C+Seongbuk-gu%2C+Seoul+02850'},{id:'olive',name:'Olive Young Gangnam Town',category:'美妆',address:'429 Gangnam-daero, Seocho-gu, Seoul',lat:37.5006,lng:127.0264,note:'共 1-3 层，可办理退税；官方页面显示营业时间为 10:00-22:30。',maps:'https://www.google.com/maps/search/?api=1&query=429+Gangnam-daero%2C+Seocho-gu%2C+Seoul'},{id:'olens',name:'OLENS Gangnam City',category:'美妆',address:'428 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5009318,lng:127.0266693,note:'江南大路门店，可退税。彩色隐形眼镜须按自身眼睛度数和验配需求购买。',maps:'https://www.google.com/maps/search/?api=1&query=428+Gangnam-daero%2C+Gangnam-gu%2C+Seoul'},{id:'lululemon',name:'lululemon Gangnam Flagship',category:'运动',address:'458 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5034023,lng:127.0254123,note:'亚洲旗舰店，位于 adidas 附近，可与江南大路购物一次完成。',maps:'https://www.google.com/maps/search/?api=1&query=458+Gangnam-daero%2C+Gangnam-gu%2C+Seoul'},{id:'adidas',name:'adidas Gangnam Brand Center',category:'运动',address:'470 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5048,lng:127.024,note:'大型多层门店；韩国旅游页面目前显示营业时间为 11:00-22:00。',maps:'https://www.google.com/maps/search/?api=1&query=470+Gangnam-daero%2C+Gangnam-gu%2C+Seoul'},{id:'loewe',name:'CASA LOEWE Seoul',category:'奢侈品',address:'446 Apgujeong-ro, Gangnam-gu, Seoul',lat:37.5261198,lng:127.0458126,note:'三层旗舰店；Google 地图目前显示 11:00 开门。',maps:'https://www.google.com/maps/search/?api=1&query=446+Apgujeong-ro%2C+Gangnam-gu%2C+Seoul'},{id:'gentle',name:'Gentle Monster HAUS DOSAN',category:'时尚',address:'50 Apgujeong-ro 46-gil, Gangnam-gu, Seoul',lat:37.525811,lng:127.0358969,note:'每日约 11:00-21:00；与 CASA LOEWE、Galleria 属同一狎鸥亭购物圈。',maps:'https://www.google.com/maps/search/?api=1&query=50+Apgujeong-ro+46-gil%2C+Gangnam-gu%2C+Seoul'},{id:'lelabo',name:'Le Labo Garosu-gil',category:'香氛',address:'28 Apgujeong-ro 10-gil, Gangnam-gu, Seoul',lat:37.5217586,lng:127.0219284,note:'新沙林荫道门店，公布营业时间约 11:00-21:00；通常每月第二个周一休息。',maps:'https://www.google.com/maps/search/?api=1&query=28+Apgujeong-ro+10-gil%2C+Gangnam-gu%2C+Seoul'},{id:'vivienne',name:'Vivienne Westwood - Galleria Apgujeong',category:'奢侈品',address:'Galleria WEST 3F, 343 Apgujeong-ro, Gangnam-gu, Seoul',lat:37.5284,lng:127.0404,note:'选择狎鸥亭 Galleria 店，可与 CASA LOEWE 安排在同一条路线。',maps:'https://www.google.com/maps/search/?api=1&query=Galleria+WEST+3F%2C+343+Apgujeong-ro%2C+Gangnam-gu%2C+Seoul'},{id:'parisien',name:'Parisien Hair Myeongdong',category:'预约',address:'31 Myeongdong 4-gil, Jung-gu, Seoul, 2F',lat:37.5625523,lng:126.983868,note:'抵达当天先剪发，方便后续拍摄。通常 10:30 开门，务必按航班时间预约并预留入境延误。',maps:'https://www.google.com/maps/search/?api=1&query=31+Myeongdong+4-gil%2C+Jung-gu%2C+Seoul%2C+2F'},{id:'joy187',name:'JOY187 Cheongdam',category:'预约',address:'3F, 30 Seolleung-ro 152-gil, Gangnam-gu, Seoul',lat:37.5241208,lng:127.0418879,note:'第二天妆发造型。建议预约最早时段，并明确说明之后要拍证件照。',maps:'https://www.google.com/maps/search/?api=1&query=3F%2C+30+Seolleung-ro+152-gil%2C+Gangnam-gu%2C+Seoul'},{id:'sihyunhada',name:'시현하다 Gangnam Original',category:'预约',address:'53-6 Teheran-ro 19-gil, Gangnam-gu, Seoul',lat:37.5007697,lng:127.0335562,note:'证件照预约点，营业约 10:00-18:30。拍摄前说明照片用途；护照照不可戴有色美瞳。',maps:'https://www.google.com/maps/search/?api=1&query=53-6+Teheran-ro+19-gil%2C+Gangnam-gu%2C+Seoul'},{id:'t1',name:'T1 HQ Shop',category:'粉丝打卡',address:'627 Seolleung-ro, Gangnam-gu, Seoul',lat:37.5118,lng:127.043,note:'公开粉丝店，约 12:00-20:00；不是进入办公区参观。',maps:'https://www.google.com/maps/search/?api=1&query=627+Seolleung-ro%2C+Gangnam-gu%2C+Seoul'},{id:'hybe',name:'HYBE Headquarters',category:'粉丝打卡',address:'42 Hangang-daero, Yongsan-gu, Seoul',lat:37.5246532,lng:126.9641564,note:'仅适合建筑外观打卡；HYBE INSIGHT 已关闭，办公楼不作为公众景点开放。',maps:'https://www.google.com/maps/search/?api=1&query=42+Hangang-daero%2C+Yongsan-gu%2C+Seoul'},{id:'clinic',name:'韩国林克整形医院 · 皮肤管理',category:'医疗',address:'首尔江南区江南大路 478，济宇大厦 4 楼',lat:37.5056,lng:127.0244,note:'新论岘站 3 号出口步行约 3 分钟。周一至周五 10:00-19:00，周六 10:00-17:00，周日及节假日休诊。',maps:'https://www.google.com/maps/search/?api=1&query=%E9%A6%96%E5%B0%94%E6%B1%9F%E5%8D%97%E5%8C%BA%E6%B1%9F%E5%8D%97%E5%A4%A7%E8%B7%AF+478%EF%BC%8C%E6%B5%8E%E5%AE%87%E5%A4%A7%E5%8E%A6+4+%E6%A5%BC'}];
-    const routeDefs={
-      day1:{color:'#5578d9',stops:['airbnb','parisien','lululemon','adidas','olens','olive','airbnb']},
-      day2:{color:'#e5523d',stops:['airbnb','joy187','sihyunhada','gentle','loewe','vivienne','lelabo','airbnb']},
-      day3:{color:'#8552b8',stops:['airbnb','clinic','t1','airbnb']}
-    };
-    const map=L.map('map',{scrollWheelZoom:false}).setView([37.5125,127.027],13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-    const colors={Stay:'#171714',Beauty:'#8aa300',Sportswear:'#5578d9',Luxury:'#e5523d',Appointment:'#d98b00',Medical:'#8552b8'};
-    const markers={}, routeLines={}, placeById=Object.fromEntries(places.map(p=>[p.id,p]));
-    const routeNumbers={airbnb:'⌂',parisien:'1',lululemon:'2',adidas:'3',olens:'4',olive:'5',joy187:'1',sihyunhada:'2',gentle:'3',loewe:'4',vivienne:'5',lelabo:'6',clinic:'1',t1:'2',hybe:'★'};
-    places.forEach(p=>{
-      const routeColor=['clinic','t1'].includes(p.id)?'#8552b8':(['joy187','sihyunhada','gentle','loewe','vivienne','lelabo'].includes(p.id)?'#e5523d':(['parisien','lululemon','adidas','olens','olive'].includes(p.id)?'#5578d9':'#171714'));
-      const icon=L.divIcon({className:'',html:`<div style="width:28px;height:28px;display:grid;place-items:center;border:3px solid white;box-shadow:0 0 0 1px #111;background:${routeColor};color:white;border-radius:50%;font:700 12px DM Sans">${routeNumbers[p.id]||'•'}</div>`,iconSize:[28,28],iconAnchor:[14,14]});
-      markers[p.id]=L.marker([p.lat,p.lng],{icon}).addTo(map).bindPopup(`<div class="popup"><strong>${p.name}</strong><p>${p.address}</p><p>${p.note}</p><a href="${p.maps}" target="_blank">在 Google 地图中打开 ↗</a></div>`);
-    });
-    Object.entries(routeDefs).forEach(([key,r])=>{
-      routeLines[key]=L.polyline(r.stops.map(id=>[placeById[id].lat,placeById[id].lng]),{color:r.color,weight:5,opacity:.82,dashArray:key==='day3'?'10 8':null}).addTo(map);
-    });
-    function showRoute(which){
-      Object.entries(routeLines).forEach(([key,line])=>{if(which==='all'||which===key)line.addTo(map);else map.removeLayer(line);});
-      const ids=which==='all'?Object.values(routeDefs).flatMap(r=>r.stops):routeDefs[which].stops;
-      const bounds=L.latLngBounds([...new Set(ids)].map(id=>markers[id].getLatLng()));
-      map.fitBounds(bounds,{padding:[45,45]});
-      document.querySelectorAll('.route-toggle').forEach(b=>b.classList.toggle('active',b.dataset.route===which));
-    }
-    document.querySelectorAll('.route-toggle').forEach(b=>b.addEventListener('click',()=>showRoute(b.dataset.route)));
-    document.querySelectorAll('.place-card').forEach(el=>el.addEventListener('click',()=>{const m=markers[el.dataset.place];map.setView(m.getLatLng(),16);m.openPopup();}));
-    document.querySelectorAll('.time-edit').forEach(input=>{const k='seoul-'+input.dataset.key;input.value=localStorage.getItem(k)||input.value;input.addEventListener('change',()=>localStorage.setItem(k,input.value));});
-    showRoute('all');
-  </script>
+<nav class="bottom"><a class="primary" href="https://maps.app.goo.gl/Mp1w7a4SKAbMYkbf6" target="_blank">Google List</a><a href="#map">Map</a><a href="#tools">Transit</a><a href="#plan">Today</a></nav>
+
+<script>
+const places=[{id:'stay',name:'住宿 / Stay',address:'57-8 Goryeodae-ro 11-gil, Seongbuk-gu, Seoul 02850',lat:37.58755,lng:127.0214},{id:'hair',name:'Parisian Hair Myeongdong',address:'31 Myeongdong 4-gil, Jung-gu, Seoul',lat:37.56255,lng:126.98387},{id:'lulu',name:'lululemon Gangnam Store',address:'458 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5034,lng:127.02541},{id:'adidas',name:'adidas Gangnam Brand Center',address:'470 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5048,lng:127.024},{id:'olens',name:'OLENS Gangnam City',address:'428 Gangnam-daero, Gangnam-gu, Seoul',lat:37.50093,lng:127.02667},{id:'olive',name:'Olive Young Gangnam Town',address:'429 Gangnam-daero, Seocho-gu, Seoul',lat:37.5006,lng:127.0264},{id:'joy',name:'JOY187',address:'30 Seolleung-ro 152-gil, Gangnam-gu, Seoul',lat:37.52412,lng:127.04189},{id:'photo',name:'sihyunhada Gangnam Original',address:'53-6 Teheran-ro 19-gil, Gangnam-gu, Seoul',lat:37.50077,lng:127.03356},{id:'gentle',name:'GENTLE MONSTER HAUS NOWHERE DOSAN',address:'50 Apgujeong-ro 46-gil, Gangnam-gu, Seoul',lat:37.52581,lng:127.0359},{id:'loewe',name:'CASA LOEWE Seoul',address:'446 Apgujeong-ro, Gangnam-gu, Seoul',lat:37.52612,lng:127.04581},{id:'vivienne',name:'Vivienne Westwood · Galleria WEST 3F',address:'343 Apgujeong-ro, Gangnam-gu, Seoul',lat:37.5284,lng:127.0404},{id:'lelabo',name:'LE LABO Garosu-gil',address:'28 Apgujeong-ro 10-gil, Gangnam-gu, Seoul',lat:37.52176,lng:127.02193},{id:'clinic',name:'LINK Clinic · 皮肤管理',address:'478 Gangnam-daero, Gangnam-gu, Seoul',lat:37.5056,lng:127.0244},{id:'t1',name:'T1 HQ Shop',address:'627 Seolleung-ro, Gangnam-gu, Seoul',lat:37.5118,lng:127.043},{id:'hybe',name:'HYBE Headquarters · 可选',address:'42 Hangang-daero, Yongsan-gu, Seoul',lat:37.52465,lng:126.96416}];
+function googleLink(p){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name+' '+p.address)}
+function focusPlace(id){const p=places.find(x=>x.id===id);window.open(googleLink(p),'_blank')}
+function filterPlaces(q){q=q.toLowerCase();document.querySelectorAll('.place').forEach(x=>x.hidden=!x.dataset.name.includes(q))}
+function toggleLang(){document.body.classList.toggle('en');localStorage.setItem('tripLang',document.body.classList.contains('en')?'en':'zh')}
+if(localStorage.getItem('tripLang')==='en')document.body.classList.add('en');
+</script>
 </body>
 </html>

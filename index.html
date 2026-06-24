@@ -25,6 +25,7 @@
     .day-head{width:100%;border:0;background:linear-gradient(90deg,#fffdf9,#fff8f4);display:grid;grid-template-columns:92px 1fr 22px;align-items:center;text-align:left;padding:17px}
     .day-head span{display:inline-block;color:var(--rose-dark);font-weight:800;font-size:12px;letter-spacing:.03em} .day-head i{font-style:normal} .day-head strong{font:700 16px "Noto Serif SC",serif} body.en .day-head strong{font-family:"DM Sans",sans-serif} .day-head b{color:var(--rose-dark);transition:.2s} .closed .day-body{display:none} .closed .day-head b{transform:rotate(180deg)}
     .stop{position:relative;display:grid;grid-template-columns:104px 1fr;gap:12px;padding:15px 17px;border-top:1px dashed var(--line)} .stop:before{content:"";position:absolute;left:108px;top:20px;width:7px;height:7px;border-radius:50%;background:var(--rose)}
+    .confirmed-stop{background:linear-gradient(90deg,#fff0f0,#fffaf7)} .confirmed-stop strong{color:var(--rose-dark)}
     time{font-size:12px;font-weight:800;color:var(--rose-dark)} .stop strong{font-size:15px} p{margin:5px 0;color:var(--muted);font-size:13px;line-height:1.55}
     .mini-links{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap} .mini-links a{text-decoration:none;color:var(--blue);border:1px solid #bfd0df;background:#f4f8fb;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700}
     #map{height:420px;width:100%;border-radius:18px;border:6px solid var(--card);box-shadow:var(--shadow);background:#ddd} .map-open{display:block;margin-top:9px;background:var(--rose);color:#fff;border-radius:13px;padding:14px;text-align:center;text-decoration:none;font-weight:800;box-shadow:0 7px 18px rgba(169,71,85,.2)} .search{width:100%;border:1px solid var(--line);background:var(--card);border-radius:13px;padding:14px;font-size:15px;margin-bottom:8px;outline:none}
@@ -66,17 +67,17 @@
                 <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=Parisian%20Hair%20Myeongdong%2031%20Myeongdong%204-gil%2C%20Jung-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
               </div>
             </div>
-            <div class="stop">
-              <time><span data-zh>预约时间</span><span data-en>Appointment time</span></time>
-              <div><strong><span data-zh>Parisian Hair</span><span data-en>Parisian Hair</span></strong>
-                <p data-zh>落地后直接剪头发，预留 90–120 分钟；随身小行李提前询问发廊能否暂放。</p><p data-en>Go straight to the haircut after landing. Allow 90–120 minutes and ask the salon in advance about storing small carry-on bags.</p>
+            <div class="stop confirmed-stop">
+              <time><span data-zh>14:00–14:30</span><span data-en>14:00–14:30</span></time>
+              <div><strong><span data-zh>Parisian Hair · 已预约</span><span data-en>Parisian Hair · Confirmed</span></strong>
+                <p data-zh>8 月 1 日 14:00 预约，剪发 30 分钟，预计 14:30 结束。落地后直接到店；随身小行李提前询问发廊能否暂放。</p><p data-en>Confirmed for 14:00 on August 1. The haircut takes 30 minutes and should finish around 14:30. Go directly to the salon and ask about storing carry-on bags.</p>
                 <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=Parisian%20Hair%20Myeongdong%2031%20Myeongdong%204-gil%2C%20Jung-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
               </div>
             </div>
             <div class="stop">
-              <time><span data-zh>15:00 后</span><span data-en>After 15:00</span></time>
+              <time><span data-zh>14:30 后</span><span data-en>After 14:30</span></time>
               <div><strong><span data-zh>前往住宿 Check-in</span><span data-en>Check in at the stay</span></strong>
-                <p data-zh>下午 3 点才可入住。剪发结束后去高丽大住宿办理入住并放下随身物品。</p><p data-en>Check-in starts at 3 PM. After the haircut, travel to the Korea University stay and leave your belongings.</p>
+                <p data-zh>住宿下午 3 点起可入住。剪发结束后去高丽大住宿办理入住并放下随身物品。</p><p data-en>Check-in is available from 3 PM. Travel to the Korea University stay after the haircut and leave your belongings.</p>
                 <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=%E4%BD%8F%E5%AE%BF%20/%20Stay%2057-8%20Goryeodae-ro%2011-gil%2C%20Seongbuk-gu%2C%20Seoul%2002850" target="_blank">Google Maps ↗</a></div>
               </div>
             </div>
@@ -109,42 +110,42 @@
           </button>
           <div class="day-body">
             <div class="stop">
-              <time><span data-zh>08:00</span><span data-en>08:00</span></time>
+              <time><span data-zh>09:00 前</span><span data-en>Before 09:00</span></time>
               <div><strong><span data-zh>住宿 → JOY187</span><span data-en>Stay → JOY187</span></strong>
-                <p data-zh>预约前至少 50 分钟出发，早上建议出租车。</p><p data-en>Leave at least 50 minutes before the appointment. A taxi is recommended in the morning.</p>
+                <p data-zh>10:00 已预约。早上建议出租车，并预留堵车和提前到店时间。</p><p data-en>The appointment is confirmed for 10:00. Take a taxi and allow time for traffic and early arrival.</p>
+                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=JOY187%2030%20Seolleung-ro%20152-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
+              </div>
+            </div>
+            <div class="stop confirmed-stop">
+              <time><span data-zh>10:00–11:30</span><span data-en>10:00–11:30</span></time>
+              <div><strong><span data-zh>JOY187 · 已预约</span><span data-en>JOY187 · Confirmed</span></strong>
+                <p data-zh>项目：2. I am an actress Today；90 分钟。Hair：Styling / Dry / Shampoo；Makeup：Makeup。</p><p data-en>Package: 2. I am an actress Today; 90 minutes. Hair: Styling / Dry / Shampoo. Makeup: Makeup.</p>
                 <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=JOY187%2030%20Seolleung-ro%20152-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
               </div>
             </div>
             <div class="stop">
-              <time><span data-zh>09:00</span><span data-en>09:00</span></time>
-              <div><strong><span data-zh>JOY187 妆发</span><span data-en>JOY187 hair & makeup</span></strong>
-                <p data-zh>预留 2–2.5 小时，说明接下来拍证件照。</p><p data-en>Allow 2–2.5 hours and explain that an ID photo session follows.</p>
-                <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=JOY187%2030%20Seolleung-ro%20152-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
-              </div>
-            </div>
-            <div class="stop">
-              <time><span data-zh>12:00</span><span data-en>12:00</span></time>
+              <time><span data-zh>12:30</span><span data-en>12:30</span></time>
               <div><strong><span data-zh>sihyunhada 证件照</span><span data-en>sihyunhada ID photo</span></strong>
-                <p data-zh>预留 60–90 分钟；护照照不要戴有色美瞳。</p><p data-en>Allow 60–90 minutes. Do not wear colored contacts for a passport photo.</p>
+                <p data-zh>建议预约 12:30 或更晚，给 JOY187 到江南店的交通留缓冲；预留 60–90 分钟。护照照不要戴有色美瞳。</p><p data-en>Book 12:30 or later to allow travel time from JOY187. Allow 60–90 minutes and do not wear colored contacts for a passport photo.</p>
                 <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=sihyunhada%20Gangnam%20Original%2053-6%20Teheran-ro%2019-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
               </div>
             </div>
             <div class="stop">
-              <time><span data-zh>14:30</span><span data-en>14:30</span></time>
+              <time><span data-zh>15:00</span><span data-en>15:00</span></time>
               <div><strong><span data-zh>Gentle Monster</span><span data-en>Gentle Monster</span></strong>
-                <p data-zh>到店后按体力调整停留时间。</p><p data-en>Adjust the visit length based on energy and queues.</p>
+                <p data-zh>到店后按体力和排队情况调整停留时间。</p><p data-en>Adjust the visit length based on energy and queues.</p>
                 <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=GENTLE%20MONSTER%20HAUS%20NOWHERE%20DOSAN%2050%20Apgujeong-ro%2046-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
               </div>
             </div>
             <div class="stop">
-              <time><span data-zh>15:40</span><span data-en>15:40</span></time>
+              <time><span data-zh>16:15</span><span data-en>16:15</span></time>
               <div><strong><span data-zh>LOEWE → Vivienne Westwood</span><span data-en>LOEWE → Vivienne Westwood</span></strong>
                 <p data-zh>同一购物区，步行或短程出租车。</p><p data-en>Both are in the same shopping area; walk or take a short taxi.</p>
                 <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=CASA%20LOEWE%20Seoul%20446%20Apgujeong-ro%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
               </div>
             </div>
             <div class="stop">
-              <time><span data-zh>17:30</span><span data-en>17:30</span></time>
+              <time><span data-zh>18:00</span><span data-en>18:00</span></time>
               <div><strong><span data-zh>LE LABO</span><span data-en>LE LABO</span></strong>
                 <p data-zh>新沙林荫道；太累就直接回住宿。</p><p data-en>Visit Garosu-gil in Sinsa, or return to the stay if tired.</p>
                 <div class="mini-links"><a href="https://www.google.com/maps/search/?api=1&query=LE%20LABO%20Garosu-gil%2028%20Apgujeong-ro%2010-gil%2C%20Gangnam-gu%2C%20Seoul" target="_blank">Google Maps ↗</a></div>
